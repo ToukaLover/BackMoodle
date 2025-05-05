@@ -341,4 +341,8 @@ export class RecursoService {
 
     }
 
+    async findTareaRecursos(tareaId:string){
+        return await this.recursoModel.find({tareaId}).select('id userId metadata.title metadata.link ')
+    }
+
 }

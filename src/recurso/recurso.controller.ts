@@ -86,6 +86,12 @@ export class RecursoController {
 
     }
 
+    // Para saber si el usuario tiene algun recurso subido a la tarea 
+    @Get('tarea/:tareaId')
+    async getRecursosByTarea(@Param('tareaId') tareaId: string) {
+        return this.recursoService.findTareaRecursos(tareaId);
+    }
+
     // Obtener recurso File por ID
     @Get('file/:id')
     async getFile(@Param('id') id: string, @Res() res: Response) {
