@@ -72,10 +72,18 @@ export class RecursoController {
     async getRecursosByProject(@Param('projectId') projectId: string) {
         return this.recursoService.getAllResourcesByProject(projectId);
     }
-    // Obtener todos los recursos de un proyecto (excepto imágenes)
+
+    // Para saber si el usuario tiene algun recurso subido a la tarea 
     @Get('tarea/:tareaId/user/:userId')
-    async getRecursosByTareaUser(@Param('tareaId') tareaId: string,@Param('userId') userId: string) {
-        return this.recursoService.findTareaByUserAndTarea(tareaId,userId);
+    async getRecursosByTareaUser(@Res() res,@Param('tareaId') tareaId: string,@Param('userId') userId: string) {
+        const recursoUSer = await this.recursoService.findTareaByUserAndTarea(tareaId,userId);
+
+        if(recursoUSer){
+            res.send({success:true})
+        }else{
+            res.send({success:false})
+        }
+
     }
 
     // Obtener recurso File por ID

@@ -337,7 +337,6 @@ export class RecursoService {
     }
 
     async findTareaByUserAndTarea(tareaId:string,userId:string){
-
         return await this.recursoModel.findOne({tareaId,userId})
 
     }
