@@ -6,6 +6,7 @@ import { Proyecto } from './proyecto.schema';
 import { Usuario } from 'src/usuario/usuario.schema';
 import { RecursoService } from 'src/recurso/recurso.service';
 import { Recurso } from 'src/recurso/recurso.schema';
+import { TestingModule } from '@nestjs/testing';
 
 @Injectable()
 export class ProyectoService {
@@ -15,6 +16,9 @@ export class ProyectoService {
 
   async findOne(id: string): Promise<Proyecto | null> {
     return this.proyectoModel.findById(id).exec();
+  }
+  async findOneByTitle(title: string): Promise<Proyecto | null> {
+    return this.proyectoModel.findOne({title}).exec();
   }
 
   async update(id: string, data: Partial<{ title: string; description: string; admin_id: string }>): Promise<Proyecto | null> {

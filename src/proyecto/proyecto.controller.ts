@@ -1,5 +1,5 @@
 // proyecto.controller.ts
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Res } from '@nestjs/common';
 import { ProyectoService } from './proyecto.service';
 import { Usuario } from 'src/usuario/usuario.schema';
 
@@ -20,6 +20,17 @@ export class ProyectoController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.proyectoService.findOne(id);
+  }
+  @Get('title/:title')
+  async findOneByTitle(@Param('title') title: string,@Res() res) {
+    const proyecto = await this.proyectoService.findOneByTitle(title);
+    
+    if(proyecto){
+      res.send({success:true})
+    }else{
+      res.send({success:false})
+    }
+  
   }
 
   @Get('user/:id')
