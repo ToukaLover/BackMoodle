@@ -345,4 +345,7 @@ export class RecursoService {
         return await this.recursoModel.find({tareaId}).select('id userId metadata.title metadata.link ')
     }
 
+    async deleteTareaRecursouser(tareaId:string,userId:string){
+        return await this.recursoModel.findOneAndDelete({tareaId,userId})
+    }
 }

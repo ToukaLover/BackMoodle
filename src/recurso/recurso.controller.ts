@@ -154,4 +154,11 @@ export class RecursoController {
     async deleteRecursoByProject(@Param('id') id: string) {
         return this.recursoService.deleteRecursosByProject(id);
     }
+
+    // Para eliminar el recurso subido a la tarea 
+    @Delete('tarea/:tareaId/user/:userId')
+    async deleteRecursoTarea(@Param('tareaId') tareaId: string,@Param('userId') userId: string) {
+        return this.recursoService.deleteTareaRecursouser(tareaId,userId);
+    }
+
 }
