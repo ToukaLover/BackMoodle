@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, SchemaTypes } from 'mongoose';
+import { Document } from 'mongoose';
 
 @Schema()
 export class Foro extends Document {
@@ -12,6 +12,12 @@ export class Foro extends Document {
 
     @Prop()
     body: string;
+
+    @Prop()
+    date:string
+
+    @Prop()
+    user:string;
 
 }
 
