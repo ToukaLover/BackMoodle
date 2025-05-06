@@ -5,12 +5,9 @@ import { jwtConstants } from './auth/constants';
 import { AuthService } from './auth/auth.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthController } from './auth/auth.controller';
-import { Link, LinkSchema } from './recurso/links.schema';
 import { RecursoService } from './recurso/recurso.service';
 import { RecursoController } from './recurso/recurso.controller';
 import { RecursoModule } from './recurso/recurso.module';
-import { Img, ImgSchema } from './recurso/img.schema';
-import { File, FileSchema } from './recurso/files.schema';
 import { Recurso, RecursoSchema } from './recurso/recurso.schema';
 import { ProyectoController } from './proyecto/proyecto.controller';
 import { ProyectoModule } from './proyecto/proyecto.module';
@@ -21,6 +18,7 @@ import { Usuario, UsuarioSchema } from './usuario/usuario.schema';
 import { UsuarioService } from './usuario/usuario.service';
 import { TareaModule } from './tarea/tarea.module';
 import { Tarea, TareaSchema } from './tarea/tarea.schema';
+import { ForoModule } from './foro/foro.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -33,9 +31,6 @@ import { Tarea, TareaSchema } from './tarea/tarea.schema';
         return connection;
       },
     }),
-    MongooseModule.forFeature([{ name: File.name, schema: FileSchema }]),
-    MongooseModule.forFeature([{ name: Link.name, schema: LinkSchema }]),
-    MongooseModule.forFeature([{ name: Img.name, schema: ImgSchema }]),
     MongooseModule.forFeature([{ name: Recurso.name, schema: RecursoSchema }]),
     MongooseModule.forFeature([{ name: Proyecto.name, schema: ProyectoSchema }]),
     MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
@@ -44,6 +39,7 @@ import { Tarea, TareaSchema } from './tarea/tarea.schema';
     ProyectoModule,
     UsuarioModule,
     TareaModule,
+    ForoModule,
   ],
   controllers: [
    AuthController, RecursoController, ProyectoController],
