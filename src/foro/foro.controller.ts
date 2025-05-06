@@ -7,7 +7,7 @@ export class ForoController {
     constructor(private readonly foroService: ForoService) { }
 
     @Post()
-    create(@Body() foro:Foro) {
+    create(@Body() foro: Foro) {
         return this.foroService.create(foro);
     }
 
@@ -23,8 +23,13 @@ export class ForoController {
         return this.foroService.findOne(id);
     }
 
+    @Get('respuestas/:idPadre')
+    async getRespuestas(@Param('idPadre') idPadre: string): Promise<Foro[]> {
+        return this.foroService.findByParentId(idPadre);
+    }
+
     @Put(':id')
-    update(@Param('id') id: string, @Body() foro:Foro) {
+    update(@Param('id') id: string, @Body() foro: Foro) {
         return this.foroService.update(id, foro);
     }
 

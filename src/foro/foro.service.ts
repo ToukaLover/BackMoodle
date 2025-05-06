@@ -15,7 +15,7 @@ export class ForoService {
   async findAll(page = 1, limit = 10): Promise<{ data: Foro[]; total: number }> {
     const skip = (page - 1) * limit;
   
-    const filter = { prevPublId: { $in: [null, ""] } }; // <- Solo mensajes sin prevPublId
+    const filter = { prevPublId: { $in: [null, ""] } };
   
     const [data, total] = await Promise.all([
       this.foroModel.find(filter).skip(skip).limit(limit).exec(),
@@ -43,4 +43,9 @@ export class ForoService {
     const result = await this.foroModel.findByIdAndDelete(id).exec();
     if (!result) throw new NotFoundException(`Foro with ID ${id} not found`);
   }
+
+  async findByParentId(parentId: string): Promise<Foro[]> {
+    return this.foroModel.find({ prevPublId: parentId }).exec();
+  }
+
 }
