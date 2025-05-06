@@ -7,14 +7,21 @@ import { Foro } from './foro.schema';
 export class ForoService {
   constructor(@InjectModel(Foro.name) private foroModel: Model<Foro>) {}
 
-  async create(createForoDto): Promise<Foro> {
+  async create(createForoDto:Foro): Promise<Foro> {
     const foro = new this.foroModel(createForoDto);
     return foro.save();
   }
 
-  async findAll(): Promise<Foro[]> {
-    return this.foroModel.find().exec();
+  async findAll(page = 1, limit = 10): Promise<{ data: Foro[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.foroModel.find().skip(skip).limit(limit).exec(),
+      this.foroModel.countDocuments().exec(),
+    ]);
+  
+    return { data, total };
   }
+  
 
   async findOne(id: string): Promise<Foro> {
     const foro = await this.foroModel.findById(id).exec();
@@ -22,7 +29,7 @@ export class ForoService {
     return foro;
   }
 
-  async update(id: string, updateForoDto): Promise<Foro> {
+  async update(id: string, updateForoDto:Foro): Promise<Foro> {
     const foro = await this.foroModel.findByIdAndUpdate(id, updateForoDto, { new: true }).exec();
     if (!foro) throw new NotFoundException(`Foro with ID ${id} not found`);
     return foro;
