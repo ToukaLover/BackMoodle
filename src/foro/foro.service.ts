@@ -14,13 +14,17 @@ export class ForoService {
 
   async findAll(page = 1, limit = 10): Promise<{ data: Foro[]; total: number }> {
     const skip = (page - 1) * limit;
+  
+    const filter = { prevPublId: { $in: [null, ""] } }; // <- Solo mensajes sin prevPublId
+  
     const [data, total] = await Promise.all([
-      this.foroModel.find().skip(skip).limit(limit).exec(),
-      this.foroModel.countDocuments().exec(),
+      this.foroModel.find(filter).skip(skip).limit(limit).exec(),
+      this.foroModel.countDocuments(filter).exec(),
     ]);
   
     return { data, total };
   }
+  
   
 
   async findOne(id: string): Promise<Foro> {
