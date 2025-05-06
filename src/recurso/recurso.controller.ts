@@ -30,7 +30,7 @@ export class RecursoController {
     // Crear recurso tipo tareaLink
     @Post('tarealink')
     async uploadTareaLink(
-        @Body() body: { link: string; title: string; userId: string,tareaId:string },
+        @Body() body: { link: string; title: string; userId: string, tareaId: string },
     ) {
         return this.recursoService.uploadTareaLink(body);
     }
@@ -42,7 +42,7 @@ export class RecursoController {
         @UploadedFile() file: Express.Multer.File,
         @Body() body,
     ) {
-        return this.recursoService.uploadFile(body,file);
+        return this.recursoService.uploadFile(body, file);
     }
 
     // Crear recurso tipo tareaFile
@@ -52,7 +52,7 @@ export class RecursoController {
         @UploadedFile() file: Express.Multer.File,
         @Body() body,
     ) {
-        return this.recursoService.uploadTareaFile(body,file);
+        return this.recursoService.uploadTareaFile(body, file);
     }
 
 
@@ -75,13 +75,13 @@ export class RecursoController {
 
     // Para saber si el usuario tiene algun recurso subido a la tarea 
     @Get('tarea/:tareaId/user/:userId')
-    async getRecursosByTareaUser(@Res() res,@Param('tareaId') tareaId: string,@Param('userId') userId: string) {
-        const recursoUSer = await this.recursoService.findTareaByUserAndTarea(tareaId,userId);
+    async getRecursosByTareaUser(@Res() res, @Param('tareaId') tareaId: string, @Param('userId') userId: string) {
+        const recursoUSer = await this.recursoService.findTareaByUserAndTarea(tareaId, userId);
 
-        if(recursoUSer){
-            res.send({success:true})
-        }else{
-            res.send({success:false})
+        if (recursoUSer) {
+            res.send({ success: true })
+        } else {
+            res.send({ success: false })
         }
 
     }
@@ -92,33 +92,38 @@ export class RecursoController {
         return this.recursoService.findTareaRecursos(tareaId);
     }
 
-    // Obtener recurso File por ID
     @Get('file/:id')
     async getFile(@Param('id') id: string, @Res() res: Response) {
         const recurso = await this.recursoService.getFile(id);
 
+        const mimetype = recurso?.metadata.mimetype;
+        const extension = this.getExtension(mimetype);
+        const title = recurso?.metadata.title?.replace(/\s+/g, '_') || 'archivo';
+        const filename = `${title}.${extension}`;
+
         res.set({
-            'Content-Type': recurso?.metadata.mimetype,
+            'Content-Type': mimetype,
+            'Content-Disposition': `attachment; filename="${filename}"`,
         });
- 
-        // Enviar el archivo directamente sin modificación
+
         res.send(recurso?.metadata.data);
     }
+
 
     // Obtener imagen de un proyecto
     @Get('img/proyecto/:projectId')
     async getImgByProject(@Param('projectId') projectId: string, @Res() res: Response) {
         const recurso = await this.recursoService.getImg(projectId);
 
-        if(recurso){
+        if (recurso) {
             res.set({
                 'Content-Type': recurso?.metadata.mimetype,
             });
-    
+
             // Enviar el archivo directamente sin modificación
             res.send(recurso?.metadata.data);
-        }else{
-            res.send({success:false})
+        } else {
+            res.send({ success: false })
         }
     }
 
@@ -127,15 +132,15 @@ export class RecursoController {
     async getDefaultImg(@Res() res: Response) {
         const recurso = await this.recursoService.getDefaultImg("6811d6f71e07ef33a6bcfdca");
 
-        if(recurso){
+        if (recurso) {
             res.set({
                 'Content-Type': recurso?.metadata.mimetype,
             });
-    
+
             // Enviar el archivo directamente sin modificación
             res.send(recurso?.metadata.data);
-        }else{
-            res.send({success:false})
+        } else {
+            res.send({ success: false })
         }
     }
 
@@ -157,8 +162,23 @@ export class RecursoController {
 
     // Para eliminar el recurso subido a la tarea 
     @Delete('tarea/:tareaId/user/:userId')
-    async deleteRecursoTarea(@Param('tareaId') tareaId: string,@Param('userId') userId: string) {
-        return this.recursoService.deleteTareaRecursouser(tareaId,userId);
+    async deleteRecursoTarea(@Param('tareaId') tareaId: string, @Param('userId') userId: string) {
+        return this.recursoService.deleteTareaRecursouser(tareaId, userId);
     }
+
+    getExtension(mimetype: string): string {
+        const map: Record<string, string> = {
+            'application/pdf': 'pdf',
+            'image/jpeg': 'jpg',
+            'image/png': 'png',
+            'text/plain': 'txt',
+            'application/msword': 'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+            // Agrega más según tu necesidad
+        };
+
+        return map[mimetype] || 'bin'; // default a 'bin' si no está definido
+    }
+
 
 }
