@@ -174,7 +174,10 @@ export class RecursoController {
             'text/plain': 'txt',
             'application/msword': 'doc',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-            // Agrega más según tu necesidad
+            'application/zip': 'zip',
+            'application/x-zip-compressed': 'zip',
+            'application/vnd.rar': 'rar',
+            'application/x-rar-compressed': 'rar',
         };
 
         return map[mimetype] || 'bin'; // default a 'bin' si no está definido
