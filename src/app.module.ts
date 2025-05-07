@@ -19,6 +19,7 @@ import { UsuarioService } from './usuario/usuario.service';
 import { TareaModule } from './tarea/tarea.module';
 import { Tarea, TareaSchema } from './tarea/tarea.schema';
 import { ForoModule } from './foro/foro.module';
+import { ChatWsModule } from './chat-ws/chat-ws.module';
 @Module({
   imports: [
     JwtModule.register({
@@ -40,6 +41,7 @@ import { ForoModule } from './foro/foro.module';
     UsuarioModule,
     TareaModule,
     ForoModule,
+    ChatWsModule,
   ],
   controllers: [
    AuthController, RecursoController, ProyectoController],
