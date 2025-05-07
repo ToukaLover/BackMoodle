@@ -40,6 +40,13 @@ export class ForoService {
   }
 
   async remove(id: string): Promise<void> {
+
+    const hijos = await this.foroModel.find({prevPublId:id})
+
+    for (let i = 0; i < hijos.length; i++) {
+      await this.remove(hijos[i].id)
+    }
+
     const result = await this.foroModel.findByIdAndDelete(id).exec();
     if (!result) throw new NotFoundException(`Foro with ID ${id} not found`);
   }
