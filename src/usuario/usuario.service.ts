@@ -31,6 +31,12 @@ export class UsuarioService {
     }
 
     async remove(id: string): Promise<any> {
+
+        await this.proyectoModel.updateMany(
+            { usuarios: id },
+            { $pull: { usuarios: id } }
+          );
+
         return this.usuarioModel.findByIdAndDelete(id).exec();
     }
 
