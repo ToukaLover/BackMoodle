@@ -1,0 +1,46 @@
+[{
+  "_id": {
+    "$oid": "6809e7bb6ddecd50c1301d03"
+  },
+  "username": "superadmin",
+  "password": "$2b$10$UZmTPqnVZUEeg2O9IpZFuu1rbui/g9sBz/6g4Plrk1N4z7cWlsmpS",
+  "role": "superadmin",
+  "proyectos": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6809e7c86ddecd50c1301d07"
+  },
+  "username": "admin2",
+  "password": "$2b$10$uz2FodWtQpjAmfsdAeVjV.lpVKQf2LDubPH6cKpub3nnixilIP2Ue",
+  "role": "admin",
+  "proyectos": [
+    "6809efc71688837a1f8939bd"
+  ],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680b41d7301c68eb09aca04b"
+  },
+  "username": "user",
+  "password": "$2b$10$89oLizvVJS5STKRSYnVrnu52zaHKJPo3M9MSaPFs9V61DGwsRlQNO",
+  "role": "user",
+  "proyectos": [
+    "6809efc71688837a1f8939bd"
+  ],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68188144b4e5ed05dd06f86a"
+  },
+  "username": "user2",
+  "password": "$2b$10$EnoWLOSH2g9bhPVTlgd28.DXQNIhoBbN5iyWonQsXHrafTmqczbMS",
+  "role": "user",
+  "proyectos": [
+    "6809efc71688837a1f8939bd"
+  ],
+  "__v": 0
+}]

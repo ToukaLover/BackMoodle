@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "6809efc71688837a1f8939bd"
+  },
+  "title": "prueba2",
+  "description": "pruebita2",
+  "admin_id": "6809e7c86ddecd50c1301d07",
+  "usuarios": [
+    "6809e7c86ddecd50c1301d07",
+    "680b41d7301c68eb09aca04b",
+    "68188144b4e5ed05dd06f86a"
+  ],
+  "__v": 0
+}]

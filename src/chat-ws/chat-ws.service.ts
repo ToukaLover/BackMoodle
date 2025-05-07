@@ -1,4 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { Socket } from 'socket.io';
+
+interface ConnectedClients{
+    [id:string]:Socket
+}
 
 @Injectable()
-export class ChatWsService {}
+export class ChatWsService {
+
+    private connectedClients : ConnectedClients = {}
+
+    registerClient(client:Socket){
+        this.connectedClients[client.id] = client
+    }
+    removeClient(id:string){
+        delete this.connectedClients[id]
+    }
+
+    getConnectedClients():number{
+        return Object.keys(this.connectedClients).length
+    }
+
+}

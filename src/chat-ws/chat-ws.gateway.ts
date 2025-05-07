@@ -2,16 +2,19 @@ import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway } from '@nes
 import { ChatWsService } from './chat-ws.service';
 import { Socket } from 'socket.io';
 
-@WebSocketGateway({cors:true})
-export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect{
-  constructor(private readonly chatWsService: ChatWsService) {}
+@WebSocketGateway({ cors: true })
+export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private readonly chatWsService: ChatWsService) { }
 
-  handleDisconnect(client: Socket) {
-    console.log("Cliente desconectado",client.id)
-  }
 
   handleConnection(client: Socket) {
-    console.log("Cliente conectado",client.id)
+    this.chatWsService.registerClient(client)
+    console.log({ conectados: this.chatWsService.getConnectedClients() })
+
   }
-  
+
+  handleDisconnect(client: Socket) {
+    this.chatWsService.removeClient(client.id)
+  }
+
 }
