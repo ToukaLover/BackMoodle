@@ -6,6 +6,4 @@ export class ChatWsGateway {
   constructor(private readonly chatWsService: ChatWsService) {}
 
   
-
-  
 }
