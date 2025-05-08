@@ -14,15 +14,14 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) { }
 
 
-
+  //Cuando se conecta un usuario, cogemos el token del header de la peticion, lo verificamos (No hace falta, siempre será correcto) y tenemos el nombre y rol  
   async handleConnection(client: Socket) {
     const token = client.handshake.headers.token as string
 
-    this.chatWsService.registerClient(client)
-
     const tokenData = await this.authService.verify(token)
 
-    console.log(tokenData)
+    this.chatWsService.registerClient(client,tokenData)
+
   }
 
   handleDisconnect(client: Socket) {
@@ -34,7 +33,8 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('message-from-user') //El cliente me lo da el propio SubscribeMessage
   handleMessageFromUser(client : Socket, payload : any){
 
-
+    console.log(this.chatWsService.getClientUser(client.id).user?.username)
+    console.log(payload)
 
   }
 
