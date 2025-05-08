@@ -27,7 +27,7 @@ export class ChatWsService {
         delete this.connectedClients[id]
     }
 
-    getConnectedClients():string[]{
+    getConnectedClients(){
         return Object.keys(this.connectedClients)
     }
 

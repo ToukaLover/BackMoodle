@@ -1,4 +1,4 @@
-import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { ChatWsService } from './chat-ws.service';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
@@ -20,6 +20,8 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const tokenData = await this.authService.verify(token)
 
+
+  
     this.chatWsService.registerClient(client,tokenData)
 
   }
@@ -33,10 +35,19 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('message-from-user') //El cliente me lo da el propio SubscribeMessage
   handleMessageFromUser(client : Socket, payload : any){
 
-    console.log(this.chatWsService.getClientUser(client.id).user?.username)
-    console.log(payload)
+    // console.log(this.chatWsService.getClientUser(client.id).user?.username)
+    // console.log(payload)
+
+    console.log(this.chatWsService.getClientUser)
 
   }
 
+  @SubscribeMessage('getUsers')
+  giveUsers(client:Socket){
+
+    this.wss.emit('giveUsers',this.chatWsService.getConnectedClients())
+    console.log("Enviando Users")
+
+  }
 
 }
