@@ -33,11 +33,9 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // on escucha, emit envia, to es a varios o a quien quieras por Id emit/on ('nombre-evento', (funcion/Que envia))
   @SubscribeMessage('message-from-user') //El cliente me lo da el propio SubscribeMessage
   handleMessageFromUser(client : Socket, payload : any){
-
-    
-
+    this.wss.to(payload.to).emit('message-to',payload.message)
   }
-
+  
   @SubscribeMessage('getUsers')
   giveUsers(client:Socket){
     this.wss.emit('giveUsers',this.chatWsService.getConnectedClients())
