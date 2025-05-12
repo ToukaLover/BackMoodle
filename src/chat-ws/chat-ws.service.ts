@@ -34,6 +34,14 @@ export class ChatWsService {
         }));
     }
     
+    getOtherClients(excludeSocketId?: string) {
+        return Object.entries(this.connectedClients)
+          .filter(([id]) => id !== excludeSocketId)
+          .map(([id, { user }]) => ({
+            socketId: id,
+            username: user?.username ?? null
+          }));
+      }
 
     getClientUser(socketId:string){
         return {socketId: this.connectedClients[socketId].socket.id, user : this.connectedClients[socketId].user?.username}
