@@ -34,10 +34,7 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('message-from-user') //El cliente me lo da el propio SubscribeMessage
   handleMessageFromUser(client : Socket, payload : any){
 
-    // console.log(this.chatWsService.getClientUser(client.id).user?.username)
-    // console.log(payload)
-
-    console.log(this.chatWsService.getClientUser)
+    
 
   }
 

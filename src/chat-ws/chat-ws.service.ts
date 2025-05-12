@@ -29,7 +29,7 @@ export class ChatWsService {
 
     getConnectedClients() {
         return Object.entries(this.connectedClients).map(([id, { user }]) => ({
-            id,
+            socketId:id,
             username: user?.username ?? null
         }));
     }
