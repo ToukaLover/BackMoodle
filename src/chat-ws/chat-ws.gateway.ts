@@ -21,9 +21,8 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const tokenData = await this.authService.verify(token)
 
 
-  
+    
     this.chatWsService.registerClient(client,tokenData)
-
   }
 
   handleDisconnect(client: Socket) {
@@ -44,10 +43,7 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('getUsers')
   giveUsers(client:Socket){
-
     this.wss.emit('giveUsers',this.chatWsService.getConnectedClients())
-    console.log("Enviando Users")
-
   }
 
 }

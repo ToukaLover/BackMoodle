@@ -27,9 +27,13 @@ export class ChatWsService {
         delete this.connectedClients[id]
     }
 
-    getConnectedClients(){
-        return Object.keys(this.connectedClients)
+    getConnectedClients() {
+        return Object.entries(this.connectedClients).map(([id, { user }]) => ({
+            id,
+            username: user?.username ?? null
+        }));
     }
+    
 
     getClientUser(socketId:string){
         return this.connectedClients[socketId]
