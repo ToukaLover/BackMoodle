@@ -45,4 +45,9 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.wss.emit('giveUsers', this.chatWsService.getConnectedClients())
   }
 
+  @SubscribeMessage('chat-cancelado')
+  chatCancel(client: Socket,to) {
+    this.wss.to(to).emit('chat-cancel')
+  }
+
 }
