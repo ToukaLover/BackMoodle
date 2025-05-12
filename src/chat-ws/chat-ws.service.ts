@@ -36,7 +36,7 @@ export class ChatWsService {
     
 
     getClientUser(socketId:string){
-        return this.connectedClients[socketId]
+        return {socketId: this.connectedClients[socketId].socket.id, user : this.connectedClients[socketId].user?.username}
     }
 
 }  

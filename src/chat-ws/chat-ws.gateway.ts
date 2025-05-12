@@ -5,12 +5,12 @@ import { AuthService } from 'src/auth/auth.service';
 
 @WebSocketGateway({ cors: true })
 export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  
+
   //Server para poder mandar cosas a los demas clientes / Siempre es asi y es de socket.io
-  @WebSocketServer() wss : Server
-  
+  @WebSocketServer() wss: Server
+
   constructor(private readonly chatWsService: ChatWsService,
-      private readonly authService : AuthService
+    private readonly authService: AuthService
   ) { }
 
 
@@ -21,8 +21,8 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const tokenData = await this.authService.verify(token)
 
 
-    
-    this.chatWsService.registerClient(client,tokenData)
+
+    this.chatWsService.registerClient(client, tokenData)
   }
 
   handleDisconnect(client: Socket) {
@@ -32,13 +32,17 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //SuscribeMessage escucha mensajes
   // on escucha, emit envia, to es a varios o a quien quieras por Id emit/on ('nombre-evento', (funcion/Que envia))
   @SubscribeMessage('message-from-user') //El cliente me lo da el propio SubscribeMessage
-  handleMessageFromUser(client : Socket, payload : any){
-    this.wss.to(payload.to).emit('message-to',payload.message)
+  handleMessageFromUser(client: Socket, payload: any) {
+    // Envía el mensaje al cliente que lo envía
+    client.emit('message-to', {message:payload.message,from: this.chatWsService.getClientUser(payload.from)});
+
+    // Envía el mensaje al usuario al que se le dirige el mensaje (payload.to)
+    this.wss.to(payload.to).emit('message-to', {message:payload.message,from: this.chatWsService.getClientUser(payload.from)});
   }
-  
+
   @SubscribeMessage('getUsers')
-  giveUsers(client:Socket){
-    this.wss.emit('giveUsers',this.chatWsService.getConnectedClients())
+  giveUsers(client: Socket) {
+    this.wss.emit('giveUsers', this.chatWsService.getConnectedClients())
   }
 
 }
