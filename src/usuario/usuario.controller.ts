@@ -4,7 +4,7 @@ import { AuthService } from 'src/auth/auth.service';
 
 @Controller('usuarios')
 export class UsuarioController {
-    constructor(private readonly usuarioService: UsuarioService, private readonly jwt: AuthService) { }
+    constructor(private readonly usuarioService: UsuarioService, private readonly authService: AuthService) { }
 
     @Get('admins')
     async findAdmins(){
@@ -40,7 +40,7 @@ export class UsuarioController {
     async getAuth(@Body() data: { pass: string, user: { username: string; password: string; role: string } }, @Res() res) {
         try {
             const result = await this.usuarioService.getAuth(data.pass, data.user.password);
-            const token = await this.jwt.signIn(data.user.username, data.user.role)
+            const token = await this.authService.signIn(data.user.username, data.user.role)
             if (result) {
                 return res.status(HttpStatus.OK).json({ success: true, token });
             } else {
@@ -54,7 +54,7 @@ export class UsuarioController {
     @Post('auth/verify')
     async getAuthVer(@Body() data, @Res() res) {
         try {
-            const result = await this.jwt.verify(data.token);
+            const result = await this.authService.verify(data.token);
             if (result) {
                 return res.status(HttpStatus.OK).json(result);
             }

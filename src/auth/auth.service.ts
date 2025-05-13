@@ -4,7 +4,7 @@ import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService) { }
 
   async signIn(
     username: string,
@@ -22,11 +22,15 @@ export class AuthService {
 
 
   async verify(
-    token:string
-  ){
-    const bool = await this.jwtService.verifyAsync(token,{secret:jwtConstants.secret})
-    
-    return bool
+    token: string
+  ) {
+    try {
+      const bool = await this.jwtService.verifyAsync(token, { secret: jwtConstants.secret })
+
+      return bool
+    } catch (error) {
+      console.error("Error Controlado: "+error)
+    }
   }
 
 }
