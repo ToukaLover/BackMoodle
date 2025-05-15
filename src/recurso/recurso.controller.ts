@@ -130,7 +130,7 @@ export class RecursoController {
     // Obtener imagen de un proyecto
     @Get('img/default')
     async getDefaultImg(@Res() res: Response) {
-        const recurso = await this.recursoService.getDefaultImg("6811d6f71e07ef33a6bcfdca");
+        const recurso = await this.recursoService.getDefaultImg("6825b9083a9defef9471f2b0");
 
         if (recurso) {
             res.set({
