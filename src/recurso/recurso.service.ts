@@ -1,4 +1,4 @@
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable, Body, Delete } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Recurso } from './recurso.schema';
@@ -347,5 +347,8 @@ export class RecursoService {
 
     async deleteTareaRecursouser(tareaId:string,userId:string){
         return await this.recursoModel.findOneAndDelete({tareaId,userId})
+    }
+    async remove (id:string){
+        await this.recursoModel.findByIdAndDelete(id)
     }
 }
