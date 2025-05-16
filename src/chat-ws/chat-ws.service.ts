@@ -23,7 +23,7 @@ export class ChatWsService {
             const user = await this.usuarioService.findByUsename(tokenData.username)
             
             this.connectedClients[client.id] = { socket: client, user }
-            console.log(this.getConnectedClients())
+            // console.log(this.getConnectedClients())
         }
     }
     removeClient(id: string) {

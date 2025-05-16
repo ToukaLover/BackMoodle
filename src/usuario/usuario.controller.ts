@@ -27,7 +27,7 @@ export class UsuarioController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() body: Partial<{ username: string; password: string; role: string }>) {
+    update(@Param('id') id: string, @Body() body: {password: string}) {
         return this.usuarioService.update(id, body);
     }
 

@@ -26,8 +26,9 @@ export class UsuarioService {
         return this.usuarioModel.findById(id).exec();
     }
 
-    async update(id: string, data: Partial<{ username: string; password: string; role: string }>): Promise<Usuario | null> {
-        return this.usuarioModel.findByIdAndUpdate(id, { $set: data }, { new: true }).exec();
+    async update(id: string, data: { password: string }): Promise<Usuario | null> {
+        const hashedPass = await hash(data.password)
+        return this.usuarioModel.findByIdAndUpdate(id, { $set: {password:hashedPass} }, { new: true }).exec();
     }
 
     async remove(id: string): Promise<any> {
@@ -35,7 +36,7 @@ export class UsuarioService {
         await this.proyectoModel.updateMany(
             { usuarios: id },
             { $pull: { usuarios: id } }
-          );
+        );
 
         return this.usuarioModel.findByIdAndDelete(id).exec();
     }
@@ -51,8 +52,8 @@ export class UsuarioService {
         }
     }
 
-    async findAdmins(){
-        return this.usuarioModel.find({role:'admin'}).exec();
+    async findAdmins() {
+        return this.usuarioModel.find({ role: 'admin' }).exec();
     }
 
     async findByUsename(username: string): Promise<Usuario | null> {
@@ -69,19 +70,19 @@ export class UsuarioService {
 
     async findByProjectId(projectId: string) {
         const project = await this.proyectoModel.findById(projectId);
-    
+
         if (!project) {
-          throw new Error('Usuario no encontrado');
+            throw new Error('Usuario no encontrado');
         }
-    
+
         // Usamos Promise.all para esperar a que todas las promesas se resuelvan
         const users = await Promise.all(
             project.usuarios.map(async (userId) => {
-            return await this.usuarioModel.findById(userId).select('id username');
-          })
+                return await this.usuarioModel.findById(userId).select('id username');
+            })
         );
-    
+
         return users;
-      }
+    }
 
 }
