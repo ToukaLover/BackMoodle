@@ -1,10 +1,10 @@
 [{
   "_id": {
-    "$oid": "680f207371fffb5cb076d9a3"
+    "$oid": "682328c49af524cf790d8141"
   },
   "projectId": "6809efc71688837a1f8939bd",
-  "title": "tareaDePrueba",
-  "description": "asd",
-  "visible": false,
+  "title": "Tarea Link",
+  "description": "En esta tarea deberias de subir un link",
+  "visible": true,
   "__v": 0
 }]

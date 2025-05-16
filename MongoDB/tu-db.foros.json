@@ -1,32 +1,21 @@
 [{
   "_id": {
-    "$oid": "681a03f766d1125fd50d002d"
+    "$oid": "6825dba70331b6c38250154b"
   },
-  "title": "¿Como se hace un Proyecto?",
-  "body": "Soy nuevo y no se como se hace un proyecto, agradecería que alguien me lo dijese.",
-  "date": "7/5/2025, 9:10:00",
+  "title": "PublicaciónForo",
+  "body": "PublicaciónForo",
+  "date": "15/5/2025, 14:18:47",
+  "user": "superadmin",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6826d430e99c21c5f36eb7d2"
+  },
+  "prevPublId": "6825dba70331b6c38250154b",
+  "title": "RespuestaForo",
+  "body": "RespuestaForo",
+  "date": "16/5/2025, 7:59:12",
   "user": "admin",
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "681b0877197dd0d3d197c5fc"
-  },
-  "prevPublId": "681a03f766d1125fd50d002d",
-  "title": "Te explico",
-  "body": "Cuando estas en el apartado de \"Proyectos\" en el NavBar, la barra roja que tienes arriba, aparece un Botón que pone, crear proyecto, que te envía a una página donde puedes rellenar el formulario de creación",
-  "date": "7/5/2025, 9:15:03",
-  "user": "superadmin",
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "681b08f0197dd0d3d197c616"
-  },
-  "prevPublId": "681b0877197dd0d3d197c5fc",
-  "title": "Ya Se",
-  "body": "Muchas gracias, ya he conseguido hacerlo 😊😊",
-  "date": "7/5/2025, 9:17:04",
-  "user": "superadmin",
   "__v": 0
 }]
