@@ -1,101 +1,73 @@
-import {
-    Controller,
-    Post,
-    Get,
-    Body,
-    Param,
-    Delete,
-    Put,
-    UploadedFile,
-    UseInterceptors,
-    Res,
-    HttpStatus,
-} from '@nestjs/common';
-import { RecursoService } from './recurso.service';
+import { Controller, Post, Get, Body, Param, Delete, Put, UploadedFile, UseInterceptors, Res, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import e, { Response } from 'express';
+import { ApiTags, ApiBody, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { Response } from 'express';
+import { RecursoService } from './recurso.service';
+import { Recurso } from './recurso.schema';
 
+@ApiTags('Recursos')
 @Controller('recursos')
 export class RecursoController {
-    constructor(private readonly recursoService: RecursoService) { }
+    constructor(private readonly recursoService: RecursoService) {}
 
-    // Crear recurso tipo Link
     @Post('link')
-    async uploadLink(
-        @Body() body: { link: string; title: string; visible: boolean; projectId: string },
-    ) {
+    @ApiBody({ type: Recurso })
+    @ApiOkResponse({ description: 'Recurso link creado', type: Recurso })
+    uploadLink(@Body() body: { link: string; title: string; visible: boolean; projectId: string }) {
         return this.recursoService.uploadLink(body);
     }
 
-    // Crear recurso tipo tareaLink
     @Post('tarealink')
-    async uploadTareaLink(
-        @Body() body: { link: string; title: string; userId: string, tareaId: string },
-    ) {
+    @ApiBody({ type: Recurso })
+    @ApiOkResponse({ description: 'Recurso tarea link creado', type: Recurso })
+    uploadTareaLink(@Body() body: { link: string; title: string; userId: string; tareaId: string }) {
         return this.recursoService.uploadTareaLink(body);
     }
 
-    // Crear recurso tipo File
     @Post('file')
     @UseInterceptors(FileInterceptor('file'))
-    async uploadFile(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() body,
-    ) {
+    @ApiOkResponse({ description: 'Archivo subido', type: Recurso })
+    uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
         return this.recursoService.uploadFile(body, file);
     }
 
-    // Crear recurso tipo tareaFile
     @Post('tareafile')
     @UseInterceptors(FileInterceptor('file'))
-    async uploadTareaFile(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() body,
-    ) {
+    @ApiOkResponse({ description: 'Archivo de tarea subido', type: Recurso })
+    uploadTareaFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
         return this.recursoService.uploadTareaFile(body, file);
     }
 
-
-
-    // Crear recurso tipo Imagen
     @Post('img')
     @UseInterceptors(FileInterceptor('file'))
-    async uploadImg(
-        @UploadedFile() file: Express.Multer.File,
-        @Body('projectId') projectId: string
-    ) {
+    @ApiOkResponse({ description: 'Imagen subida', type: Recurso })
+    uploadImg(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string) {
         return this.recursoService.uploadImg(file, projectId);
     }
 
-    // Obtener todos los recursos de un proyecto (excepto imágenes)
     @Get('proyecto/:projectId')
-    async getRecursosByProject(@Param('projectId') projectId: string) {
+    @ApiOkResponse({ description: 'Recursos del proyecto', type: [Recurso] })
+    getRecursosByProject(@Param('projectId') projectId: string) {
         return this.recursoService.getAllResourcesByProject(projectId);
     }
 
-    // Para saber si el usuario tiene algun recurso subido a la tarea 
     @Get('tarea/:tareaId/user/:userId')
-    async getRecursosByTareaUser(@Res() res, @Param('tareaId') tareaId: string, @Param('userId') userId: string) {
+    @ApiOkResponse({ description: 'Verifica si el usuario tiene recursos en la tarea' })
+    async getRecursosByTareaUser(@Res() res: Response, @Param('tareaId') tareaId: string, @Param('userId') userId: string) {
         const recursoUSer = await this.recursoService.findTareaByUserAndTarea(tareaId, userId);
-
-        if (recursoUSer) {
-            res.send({ success: true })
-        } else {
-            res.send({ success: false })
-        }
-
+        res.send({ success: !!recursoUSer });
     }
 
-    // Para saber si el usuario tiene algun recurso subido a la tarea 
     @Get('tarea/:tareaId')
-    async getRecursosByTarea(@Param('tareaId') tareaId: string) {
+    @ApiOkResponse({ description: 'Recursos de una tarea', type: [Recurso] })
+    getRecursosByTarea(@Param('tareaId') tareaId: string) {
         return this.recursoService.findTareaRecursos(tareaId);
     }
 
     @Get('file/:id')
+    @ApiOkResponse({ description: 'Archivo descargado' })
     async getFile(@Param('id') id: string, @Res() res: Response) {
         const recurso = await this.recursoService.getFile(id);
-
         const mimetype = recurso?.metadata.mimetype;
         const extension = this.getExtension(mimetype);
         const title = recurso?.metadata.title?.replace(/\s+/g, '_') || 'archivo';
@@ -109,70 +81,56 @@ export class RecursoController {
         res.send(recurso?.metadata.data);
     }
 
-
-    // Obtener imagen de un proyecto
     @Get('img/proyecto/:projectId')
+    @ApiOkResponse({ description: 'Imagen del proyecto' })
     async getImgByProject(@Param('projectId') projectId: string, @Res() res: Response) {
         const recurso = await this.recursoService.getImg(projectId);
-
         if (recurso) {
-            res.set({
-                'Content-Type': recurso?.metadata.mimetype,
-            });
-
-            // Enviar el archivo directamente sin modificación
+            res.set({ 'Content-Type': recurso?.metadata.mimetype });
             res.send(recurso?.metadata.data);
         } else {
-            res.send({ success: false })
+            res.send({ success: false });
         }
     }
 
-    // Obtener imagen de un proyecto
     @Get('img/default')
+    @ApiOkResponse({ description: 'Imagen por defecto' })
     async getDefaultImg(@Res() res: Response) {
         const recurso = await this.recursoService.getDefaultImg("6825b9083a9defef9471f2b0");
-
         if (recurso) {
-            res.set({
-                'Content-Type': recurso?.metadata.mimetype,
-            });
-
-            // Enviar el archivo directamente sin modificación
+            res.set({ 'Content-Type': recurso?.metadata.mimetype });
             res.send(recurso?.metadata.data);
         } else {
-            res.send({ success: false })
+            res.send({ success: false });
         }
     }
 
-
-    // Actualizar recurso tipo Link o File (usamos Partial)
     @Put(':id')
-    async updateRecurso(
-        @Param('id') id: string,
-        @Body() body: { visible?: boolean; title?: string },
-    ) {
+    @ApiBody({ type: Recurso })
+    @ApiOkResponse({ description: 'Recurso actualizado', type: Recurso })
+    updateRecurso(@Param('id') id: string, @Body() body: { visible?: boolean; title?: string }) {
         return this.recursoService.updateRecurso(id, body);
     }
 
-    // Eliminar recurso por ID (cualquiera)
     @Delete(':id')
-    async deleteRecursoByProject(@Param('id') id: string) {
+    @ApiOkResponse({ description: 'Recurso eliminado' })
+    deleteRecursoByProject(@Param('id') id: string) {
         return this.recursoService.deleteRecursosByProject(id);
     }
-    // Eliminar recurso por ID (cualquiera)
+
     @Delete('delAny/:id')
-    async deleteRecurso(@Param('id') id: string) {
+    @ApiOkResponse({ description: 'Recurso eliminado completamente' })
+    deleteRecurso(@Param('id') id: string) {
         return this.recursoService.remove(id);
     }
 
-
-    // Para eliminar el recurso subido a la tarea 
     @Delete('tarea/:tareaId/user/:userId')
-    async deleteRecursoTarea(@Param('tareaId') tareaId: string, @Param('userId') userId: string) {
+    @ApiOkResponse({ description: 'Recurso de tarea eliminado' })
+    deleteRecursoTarea(@Param('tareaId') tareaId: string, @Param('userId') userId: string) {
         return this.recursoService.deleteTareaRecursouser(tareaId, userId);
     }
 
-    getExtension(mimetype: string): string {
+    private getExtension(mimetype: string): string {
         const map: Record<string, string> = {
             'application/pdf': 'pdf',
             'image/jpeg': 'jpg',
@@ -185,9 +143,6 @@ export class RecursoController {
             'application/vnd.rar': 'rar',
             'application/x-rar-compressed': 'rar',
         };
-
-        return map[mimetype] || 'bin'; // default a 'bin' si no está definido
+        return map[mimetype] || 'bin';
     }
-
-
 }

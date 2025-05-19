@@ -1,5 +1,8 @@
 /src/auth/constants.ts
 
+.env
+.env.prod
+
 # compiled output
 /dist
 /node_modules
