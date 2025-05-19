@@ -8,7 +8,7 @@ import { Recurso } from './recurso.schema';
 @ApiTags('Recursos')
 @Controller('recursos')
 export class RecursoController {
-    constructor(private readonly recursoService: RecursoService) {}
+    constructor(private readonly recursoService: RecursoService) { }
 
     @Post('link')
     @ApiBody({ type: Recurso })
@@ -25,6 +25,7 @@ export class RecursoController {
     }
 
     @Post('file')
+    //Recibe un fichero
     @UseInterceptors(FileInterceptor('file'))
     @ApiOkResponse({ description: 'Archivo subido', type: Recurso })
     uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
@@ -32,6 +33,7 @@ export class RecursoController {
     }
 
     @Post('tareafile')
+    //Recibe un fichero
     @UseInterceptors(FileInterceptor('file'))
     @ApiOkResponse({ description: 'Archivo de tarea subido', type: Recurso })
     uploadTareaFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
@@ -39,6 +41,7 @@ export class RecursoController {
     }
 
     @Post('img')
+    //Recibe un fichero
     @UseInterceptors(FileInterceptor('file'))
     @ApiOkResponse({ description: 'Imagen subida', type: Recurso })
     uploadImg(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string) {
@@ -67,28 +70,35 @@ export class RecursoController {
     @Get('file/:id')
     @ApiOkResponse({ description: 'Archivo descargado' })
     async getFile(@Param('id') id: string, @Res() res: Response) {
+        //Recibo el id del fichero (guardado en la base de datos)
         const recurso = await this.recursoService.getFile(id);
         const mimetype = recurso?.metadata.mimetype;
         const extension = this.getExtension(mimetype);
         const title = recurso?.metadata.title?.replace(/\s+/g, '_') || 'archivo';
         const filename = `${title}.${extension}`;
 
+        //Pongo titulo y tipo al fichero
         res.set({
             'Content-Type': mimetype,
             'Content-Disposition': `attachment; filename="${filename}"`,
         });
 
+        //Envio el binario del recurso
         res.send(recurso?.metadata.data);
     }
 
     @Get('img/proyecto/:projectId')
     @ApiOkResponse({ description: 'Imagen del proyecto' })
     async getImgByProject(@Param('projectId') projectId: string, @Res() res: Response) {
+        //Busca un img por su projectId
         const recurso = await this.recursoService.getImg(projectId);
         if (recurso) {
+            //Pongo titulo y tipo al fichero
             res.set({ 'Content-Type': recurso?.metadata.mimetype });
+            //Envio el binario del recurso
             res.send(recurso?.metadata.data);
         } else {
+            //Al poder no tener imagen, devuelve false, en caso de no tenerla
             res.send({ success: false });
         }
     }
@@ -96,6 +106,7 @@ export class RecursoController {
     @Get('img/default')
     @ApiOkResponse({ description: 'Imagen por defecto' })
     async getDefaultImg(@Res() res: Response) {
+        //Esto devuelve una imagen por defecto, en la base de datos tiene esa Id, si cambia dejaria de funcionar
         const recurso = await this.recursoService.getDefaultImg("6825b9083a9defef9471f2b0");
         if (recurso) {
             res.set({ 'Content-Type': recurso?.metadata.mimetype });
@@ -130,6 +141,8 @@ export class RecursoController {
         return this.recursoService.deleteTareaRecursouser(tareaId, userId);
     }
 
+    //Con esta funcion recojo el mimetype de un fichero, para poder añadirle una extension automaticamente a la hora de devolver un fichero
+    //Estos no son todas las extensiones existentes, son las mas usadas
     private getExtension(mimetype: string): string {
         const map: Record<string, string> = {
             'application/pdf': 'pdf',

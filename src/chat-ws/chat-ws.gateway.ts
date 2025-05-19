@@ -4,6 +4,8 @@ import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 
 @WebSocketGateway({ cors: true })
+
+//Implementamos las clases OnGatewayConnection y OnGatewayDisconnect que manejan la conexion y desconexion.
 export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   //Server para poder mandar cosas a los demas clientes / Siempre es asi y es de socket.io
@@ -20,11 +22,11 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const tokenData = await this.authService.verify(token)
 
-
-
     this.chatWsService.registerClient(client, tokenData)
   }
 
+
+  //Cuando se desconecta, quitamos al cliente de la lista
   handleDisconnect(client: Socket) {
     this.chatWsService.removeClient(client.id)
   }
@@ -40,16 +42,22 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.wss.to(payload.to).emit('message-to', {message:payload.message,from: this.chatWsService.getClientUser(payload.from)});
   }
 
+  //Si el servidor escucha el mensaje "getUsers"
   @SubscribeMessage('getUsers')
   giveUsers(client: Socket) {
+
+    //El server emite "giveUsers" y manda con esto una lista con todos los sockets menos él proprio cliente que mandó "getUsers"
+
     this.wss.emit('giveUsers', this.chatWsService.getOtherClients(client.id))
   }
 
+  //Si el chat es cancelado (cuando se cancela el cliente emite "chat-cancelado") el servidor manda al cliente especificado "chat-cancel"
   @SubscribeMessage('chat-cancelado')
   chatCancel(client: Socket,to) {
     this.wss.to(to).emit('chat-cancel')
   }
 
+  //Si el chat esta ocupado (el cliente emite esto) el servidor manda al cliente especificado "Usuario-Ocupado"
   @SubscribeMessage('chat-ocupado')
   chatOcupado(client: Socket,to) {
     this.wss.to(to).emit('Usuario-Ocupado')

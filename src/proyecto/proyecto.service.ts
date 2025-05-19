@@ -14,22 +14,30 @@ export class ProyectoService {
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
     @InjectModel(Recurso.name) private recursoModel: Model<Recurso>) { }
 
+
+  //Busca un proyecto en especifico
   async findOne(id: string): Promise<Proyecto | null> {
     return this.proyectoModel.findById(id).exec();
   }
+
+  //Busca un proyecto por su titulo (el titulo no se puede repetir)
   async findOneByTitle(title: string): Promise<Proyecto | null> {
-    return this.proyectoModel.findOne({title}).exec();
+    return this.proyectoModel.findOne({ title }).exec();
   }
 
+  //Actuliza el proyecto especificado
   async update(id: string, data: Partial<{ title: string; description: string; admin_id: string }>): Promise<Proyecto | null> {
     return this.proyectoModel.findByIdAndUpdate(id, { $set: data }, { new: true }).exec();
   }
 
+  //Borra el proyecto en especifico
   async remove(id: string): Promise<any> {
 
+    //Borra todos los recursos con ese projectId
     await this.recursoModel.deleteMany({ projectId: id })
 
-    await this.usuarioModel.updateMany(
+    //Quita el string del projectId de la lista de proyectos del usuario, así dejan de esta relacionados
+    await this.usuarioModel.updateMany( 
       { proyectos: id },
       { $pull: { proyectos: id } }
     );
@@ -50,9 +58,10 @@ export class ProyectoService {
       usuarios: [adminId],  // Guardar adminId como string en usuarios
     });
 
-    // Guardar el proyecto
+    // Guarda el proyecto
     const savedProyecto = await proyecto.save()
-
+    
+    //Mete el proyecto a la lista de proyectos del usuario admin, así esta relacionado directamente al ser creado
     const userActualizado = await this.usuarioModel.findByIdAndUpdate(
       adminId,
       { $push: { proyectos: savedProyecto._id?.toString() } },
@@ -63,7 +72,10 @@ export class ProyectoService {
     return { savedProyecto, userActualizado };
   }
 
+  //Buscar los proyectos de un usuario en concreto
   async findByUserId(userId: string) {
+
+    //Cogemos al usuario en cuestion
     const user = await this.usuarioModel.findById(userId);
 
     if (!user) {
@@ -80,10 +92,12 @@ export class ProyectoService {
     return proyectos;  // Devuelve la lista de proyectos encontrados
   }
 
+  //Devuelve todos los proyectos
   async findAll() {
     return this.proyectoModel.find().populate('usuarios', 'usename role').exec();
   }
 
+  //Devuelve los usuarios de cierto proyecto
   async findProyectoWithUsuarios(id: string) {
     return this.proyectoModel
       .findById(id)
@@ -91,15 +105,17 @@ export class ProyectoService {
       .exec();
   }
 
+  // Agrega el usuario al proyecto
   async addUserToProyecto(proyectoId: string, usuarioId: string) {
-    // Agregar el usuario al proyecto
+
+    //Mete el usuario a la lista de usuarios del proyecto
     const proyecto = await this.proyectoModel.findByIdAndUpdate(
       proyectoId,
       { $addToSet: { usuarios: usuarioId } }, // Se guarda como string
       { new: true }
     );
 
-    // Agregar el proyecto al usuario
+    //Mete el proyecto a la lista de proyectos del usuario
     const usuario = await this.usuarioModel.findByIdAndUpdate(
       usuarioId,
       { $addToSet: { proyectos: proyectoId } }, // También como string
@@ -109,6 +125,7 @@ export class ProyectoService {
     return { proyecto, usuario };
   }
 
+  //Borra la relacion entre un usuario y un proyecto
   async deleteUserFromProyecto(proyectoId: string, usuarioId: string) {
     // Agregar el usuario al proyecto
     const proyecto = await this.proyectoModel.findByIdAndUpdate(

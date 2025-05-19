@@ -16,7 +16,7 @@ export class RecursoService {
 
     constructor(@InjectModel(Recurso.name) private recursoModel: Model<Recurso>) { }
     //Recursos Links
-
+    //Sube un link
     async uploadLink(body: { link: string; title: string; visible: boolean; projectId: string }) {
         const date = new Date();
 
@@ -34,7 +34,7 @@ export class RecursoService {
         return created.save();
     }
 
-
+    //Encuentra los recursos tipo link de cierto proyecto
     async findByProjectId(projectId: string): Promise<CreateLinkDto[]> {
         const recursos = await this.recursoModel.find({
             projectId,
@@ -51,7 +51,7 @@ export class RecursoService {
         }));
     }
 
-
+    //Actuliza un Link
     async updateLink(id: string, body: Partial<CreateLinkDto>) {
         const updateFields = {};
 
@@ -69,12 +69,13 @@ export class RecursoService {
         ).exec();
     }
 
+    //Borra un Link
     async deleteLink(id: string) {
         return this.recursoModel.findByIdAndDelete(id).exec();
     }
 
     //Recursos Files
-
+    //Sube un recurso tipo "file" que se refiere a cualquier fichero
     async uploadFile(body, file: Express.Multer.File) {
 
         const date = new Date()
@@ -100,7 +101,7 @@ export class RecursoService {
         return recurso.save();
 
     }
-
+    //Recoge un fichero por su id
     async getFile(id: string) {
         const recurso = await this.recursoModel.findById(id).exec();
 
@@ -138,11 +139,11 @@ export class RecursoService {
         return null;
     }
 
-
+    //Borra un fichero
     async deleteFile(id: string) {
         return this.recursoModel.findByIdAndDelete(id).exec();
     }
-
+    //Actuliza un fichero
     async updateFile(id: string, body: Partial<CreateLinkDto>) {
         const updateFields = {};
 
@@ -161,7 +162,7 @@ export class RecursoService {
     }
 
     //Recurso ImgProfile
-
+    //Guarda un ficghero, pero que sea tipo img, ya que no quiero que salgan cuando busco recursos por su projectId
     async uploadImg(file: Express.Multer.File, projectId: string) {
         const created = new CreateImgDto()
 
@@ -180,6 +181,7 @@ export class RecursoService {
 
         return recurso.save();
     }
+    //Envia la imagen de cierto proyecto, si existe te manda su binario etc, si no, envia null
     async getImg(id: string) {
 
         const recurso = await this.recursoModel.findOne({ resourceType: "img", projectId: id });
@@ -211,7 +213,7 @@ export class RecursoService {
             return null
         }
     }
-
+    //Devuelve un fichero, pero es predeterminado un img en concreto
     async getDefaultImg(id:string) {
 
         const recurso = await this.recursoModel.findById(id);
@@ -243,12 +245,12 @@ export class RecursoService {
             return null
         }
     }
-
+    //Borra una imagen
     async deleteImg(id: string) {
         return this.recursoModel.findByIdAndDelete(id).exec();
     }
 
-    //Recursos
+    //Recursos (Funciones generales para todos los tipos de recursos)
 
     async getAllResourcesByProject(projectName: string): Promise<Recurso[]> {
         return this.recursoModel

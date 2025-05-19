@@ -12,6 +12,7 @@ export class ForoService {
     return foro.save();
   }
 
+  //Busca cierto numero de publicaciones del foro 
   async findAll(page = 1, limit = 10): Promise<{ data: Foro[]; total: number }> {
     const skip = (page - 1) * limit;
   
@@ -26,19 +27,21 @@ export class ForoService {
   }
   
   
-
+  //Busca una publicacion del foro en concreto (no se usa)
   async findOne(id: string): Promise<Foro> {
     const foro = await this.foroModel.findById(id).exec();
     if (!foro) throw new NotFoundException(`Foro with ID ${id} not found`);
     return foro;
   }
 
+  //Actuliza una publicacion (no se usa)
   async update(id: string, updateForoDto:Foro): Promise<Foro> {
     const foro = await this.foroModel.findByIdAndUpdate(id, updateForoDto, { new: true }).exec();
     if (!foro) throw new NotFoundException(`Foro with ID ${id} not found`);
     return foro;
   }
 
+  //Elimina la publicacion especificada
   async remove(id: string): Promise<void> {
 
     const hijos = await this.foroModel.find({prevPublId:id})
@@ -51,6 +54,7 @@ export class ForoService {
     if (!result) throw new NotFoundException(`Foro with ID ${id} not found`);
   }
 
+  //Busca las publicaciones que tenga el prevPublId mandado
   async findByParentId(parentId: string): Promise<Foro[]> {
     return this.foroModel.find({ prevPublId: parentId }).exec();
   }

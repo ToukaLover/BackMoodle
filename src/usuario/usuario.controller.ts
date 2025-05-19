@@ -11,7 +11,7 @@ export class UsuarioController {
         private readonly usuarioService: UsuarioService,
         private readonly authService: AuthService,
     ) { }
-
+    //Devuelve solo los usuarios con rol admin
     @Get('admins')
     @ApiOkResponse({ description: 'Lista de usuarios administradores', type: [Usuario] })
     findAdmins() {
@@ -49,6 +49,7 @@ export class UsuarioController {
         return this.usuarioService.remove(id);
     }
 
+    //Crea token
     @ApiExcludeEndpoint()
     @Post('auth')
     async getAuth(
@@ -80,6 +81,7 @@ export class UsuarioController {
         }
     }
 
+    //Recibe token y devuelve el contenido en caso de ser valido
     @Post('auth/verify')
     @ApiOkResponse({ description: 'Verificación de token JWT' })
     @ApiResponse({ status: 500, description: 'Token no válido' })
