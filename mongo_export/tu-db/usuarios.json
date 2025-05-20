@@ -16,8 +16,8 @@
   "password": "$2b$10$uz2FodWtQpjAmfsdAeVjV.lpVKQf2LDubPH6cKpub3nnixilIP2Ue",
   "role": "admin",
   "proyectos": [
-    "6809efc71688837a1f8939bd",
-    "6826dab9c5a8006824cfca72"
+    "682c2dcdcc45e55430bae4f0",
+    "682c2f3ecc45e55430bae551"
   ],
   "__v": 0
 },
@@ -29,17 +29,29 @@
   "password": "$2b$10$89oLizvVJS5STKRSYnVrnu52zaHKJPo3M9MSaPFs9V61DGwsRlQNO",
   "role": "user",
   "proyectos": [
-    "6809efc71688837a1f8939bd"
+    "682c2dcdcc45e55430bae4f0"
   ],
   "__v": 0
 },
 {
   "_id": {
-    "$oid": "68188144b4e5ed05dd06f86a"
+    "$oid": "682c2eabcc45e55430bae526"
+  },
+  "username": "admin2",
+  "password": "$2b$10$qB/4PVdvHAM.dYVIO3.v5.2HWSB3BUKyWr2C7LYLEbJvH0HYKM3kC",
+  "role": "admin",
+  "proyectos": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "682c2eb2cc45e55430bae529"
   },
   "username": "user2",
-  "password": "$2b$10$EnoWLOSH2g9bhPVTlgd28.DXQNIhoBbN5iyWonQsXHrafTmqczbMS",
+  "password": "$2b$10$AbSg/T22M1aE2CFRd6IY6elVk6uFN1h/w9.20XBHIx051JYG5F2n6",
   "role": "user",
-  "proyectos": [],
+  "proyectos": [
+    "682c2f3ecc45e55430bae551"
+  ],
   "__v": 0
 }]

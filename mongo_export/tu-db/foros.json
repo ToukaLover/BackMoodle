@@ -1,0 +1,42 @@
+[{
+  "_id": {
+    "$oid": "6825dba70331b6c38250154b"
+  },
+  "title": "PublicaciónForo",
+  "body": "PublicaciónForo",
+  "date": "15/5/2025, 14:18:47",
+  "user": "superadmin",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6826d430e99c21c5f36eb7d2"
+  },
+  "prevPublId": "6825dba70331b6c38250154b",
+  "title": "RespuestaForo",
+  "body": "RespuestaForo",
+  "date": "16/5/2025, 7:59:12",
+  "user": "admin",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "682c3216cc45e55430bae6be"
+  },
+  "prevPublId": "6826d430e99c21c5f36eb7d2",
+  "title": "Respuesta a una Respuesta",
+  "body": "Respuesta a una Respuesta",
+  "date": "20/5/2025, 9:41:10",
+  "user": "user",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "682c3249cc45e55430bae6d1"
+  },
+  "title": "Otra publicacion del foro",
+  "body": "Otra publicación del foro",
+  "date": "20/5/2025, 9:42:01",
+  "user": "user2",
+  "__v": 0
+}]

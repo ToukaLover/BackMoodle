@@ -1,0 +1,34 @@
+# Ignorar dependencias instaladas localmente
+node_modules
+npm-debug.log*
+yarn-error.log*
+
+# Ignorar artefactos de build y cobertura
+dist
+coverage
+
+# Ignorar variables de entorno y ficheros sensibles
+.env
+*.local
+
+# Ignorar ficheros de configuración de Docker (no necesarios) 
+Dockerfile
+docker-compose.yml
+
+# Ignorar control de versiones
+.git
+.gitignore
+
+# Ignorar metadatos de editores/IDE
+.vscode/
+.idea/
+
+# Ignorar logs y temporales
+logs/
+*.log
+tmp/
+*.tmp
+
+# Ignorar archivos de sistema (macOS, Windows)
+.DS_Store
+Thumbs.db

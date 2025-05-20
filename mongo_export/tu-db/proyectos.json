@@ -1,0 +1,26 @@
+[{
+  "_id": {
+    "$oid": "682c2dcdcc45e55430bae4f0"
+  },
+  "title": "PrimerProyecto",
+  "description": "Este es el primer proyecto creado en esta app",
+  "admin_id": "6809e7c86ddecd50c1301d07",
+  "usuarios": [
+    "6809e7c86ddecd50c1301d07",
+    "680b41d7301c68eb09aca04b"
+  ],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "682c2f3ecc45e55430bae551"
+  },
+  "title": "ProyectoParaUser2",
+  "description": "Este proyecto es para que solo lo vea el admin y el user2",
+  "admin_id": "6809e7c86ddecd50c1301d07",
+  "usuarios": [
+    "6809e7c86ddecd50c1301d07",
+    "682c2eb2cc45e55430bae529"
+  ],
+  "__v": 0
+}]

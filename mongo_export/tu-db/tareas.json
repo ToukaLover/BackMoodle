@@ -1,0 +1,20 @@
+[{
+  "_id": {
+    "$oid": "682c2e01cc45e55430bae500"
+  },
+  "projectId": "682c2dcdcc45e55430bae4f0",
+  "title": "Primera Tarea",
+  "description": "En esta tarea se subirá cualquier cosa, solo es para pruebas",
+  "visible": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "682c2e67cc45e55430bae505"
+  },
+  "projectId": "682c2dcdcc45e55430bae4f0",
+  "title": "Tarea NO Visible",
+  "description": "Esta es una tarea NO visible, para que se vea que no se muestra a los usuarios",
+  "visible": false,
+  "__v": 0
+}]

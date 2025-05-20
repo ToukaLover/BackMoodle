@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  mongo-importer:
+    build: .
+    container_name: mongo-importer
+    depends_on: []
