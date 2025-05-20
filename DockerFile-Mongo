@@ -1,0 +1,11 @@
+#Etapa Mongo
+FROM mongo:6.0
+
+COPY /mongo_export /export
+COPY /mongo_init/restore.sh /restore.sh
+
+RUN chmod +x restore.sh
+
+ENTRYPOINT [ "/restore.sh" ]
+
+EXPOSE 27017

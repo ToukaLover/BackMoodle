@@ -1,7 +1,28 @@
-version: '3.8'
-
 services:
-  mongo-importer:
-    build: .
-    container_name: mongo-importer
-    depends_on: []
+
+  mongo:
+    build: 
+      context: .
+      dockerfile: DockerFile-Mongo
+    container_name: mongo-preloaded
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+
+    # volumes: 
+      # - ./mongo_init/restore.sh:/docker-entrypoint-initdb.d/restore.sh
+      # - ./mongo_export:/docker-entrypoint-initdb.d/export
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    environment:
+      - MONGODB
+    depends_on:
+      - mongo
