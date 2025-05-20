@@ -1,13 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 async function bootstrap() {
   const cors = require('cors');
   const app = await NestFactory.create(AppModule);
   app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: process.env.CORS!
   }));
   const config = new DocumentBuilder()
     .setTitle('Reto Moodle')

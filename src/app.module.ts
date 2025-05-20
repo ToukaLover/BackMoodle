@@ -20,6 +20,9 @@ import { TareaModule } from './tarea/tarea.module';
 import { Tarea, TareaSchema } from './tarea/tarea.schema';
 import { ForoModule } from './foro/foro.module';
 import { ChatWsModule } from './chat-ws/chat-ws.module';
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 @Module({
   imports: [
     JwtModule.register({
@@ -27,7 +30,7 @@ import { ChatWsModule } from './chat-ws/chat-ws.module';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1d' }
     }),
-    MongooseModule.forRoot('mongodb://localhost/tu-db', {
+    MongooseModule.forRoot(process.env.MONGODB!, {
       connectionFactory: (connection) => {
         return connection;
       },
