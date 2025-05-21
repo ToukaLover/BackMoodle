@@ -1,11 +1,5 @@
-#Etapa Mongo
 FROM mongo:6.0
 
-COPY /mongo_export /export
-COPY /mongo_init/restore.sh /restore.sh
-
-RUN chmod +x restore.sh
-
-ENTRYPOINT [ "/restore.sh" ]
+COPY mongo_init/restore.js /docker-entrypoint-initdb.d/restore.js
 
 EXPOSE 27017
