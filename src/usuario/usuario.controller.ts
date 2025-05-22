@@ -91,6 +91,9 @@ export class UsuarioController {
             if (result) {
                 return res.status(HttpStatus.OK).json(result);
             }
+            if(!result){
+                return res.status(HttpStatus.OK).json({message:"token no valido"})
+            }
         } catch (error) {
             return res
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

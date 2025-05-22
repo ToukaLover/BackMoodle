@@ -99,7 +99,7 @@ export class RecursoController {
             res.send(recurso?.metadata.data);
         } else {
             //Al poder no tener imagen, devuelve false, en caso de no tenerla
-            res.send({ success: false });
+            res.send({ success: false, message: 'Imagen no encontrada' });
         }
     }
 
