@@ -21,6 +21,10 @@ export class Foro extends Document {
     date: string
 
     @ApiProperty()
+    @Prop({required:false})
+    proyectoId: string
+
+    @ApiProperty()
     @Prop()
     user: string;
 

@@ -1,12 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Query } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete, Put, Query, BadRequestException } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { ForoService } from './foro.service';
 import { Foro } from './foro.schema';
 
 @ApiTags('Foro')
 @Controller('foro')
 export class ForoController {
-  constructor(private readonly foroService: ForoService) {}
+  constructor(private readonly foroService: ForoService) { }
 
   @Post()
   @ApiResponse({ status: 201, description: 'Publicación creada exitosamente', type: Foro })
@@ -21,6 +21,26 @@ export class ForoController {
     const pageNum = parseInt(page, 10) || 1;
     const limitNum = parseInt(limit, 10) || 10;
     return this.foroService.findAll(pageNum, limitNum);
+  }
+
+  @Get('proyecto/:proyectoId')
+  @ApiOkResponse({ description: 'Listado de publicaciones filtradas por proyectoId', type: [Foro] })
+  @ApiParam({ name: 'proyectoId', description: 'ID del proyecto' })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página', example: '1' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Límite por página', example: '10' })
+  findByProyectoId(
+    @Param('proyectoId') proyectoId: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    if (!proyectoId) {
+      throw new BadRequestException('proyectoId is required');
+    }
+
+    return this.foroService.findByProyectoId(proyectoId, pageNum, limitNum);
   }
 
   @Get(':id')
