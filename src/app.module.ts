@@ -20,8 +20,13 @@ import { TareaModule } from './tarea/tarea.module';
 import { Tarea, TareaSchema } from './tarea/tarea.schema';
 import { ForoModule } from './foro/foro.module';
 import { ChatWsModule } from './chat-ws/chat-ws.module';
-import * as dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from 'dotenv';
+import { Connection } from 'mongoose';
+import { MongoConnectionInterceptor } from './mongo-connection.interceptor';
+
+dotenv.config();
+
+let mongoConnected = false;  // Variable global para estado de conexión
 
 @Module({
   imports: [
@@ -31,7 +36,27 @@ dotenv.config()
       signOptions: { expiresIn: '1d' }
     }),
     MongooseModule.forRoot(process.env.MONGODB!, {
-      connectionFactory: (connection) => {
+      connectionFactory: (connection: Connection) => {
+        connection.on('error', (err) => {
+          console.error('Error de conexión a MongoDB:', err);
+          mongoConnected = false;
+        });
+
+        connection.on('disconnected', () => {
+          console.warn('Conexión a MongoDB desconectada');
+          mongoConnected = false;
+        });
+
+        connection.once('open', () => {
+          console.log('Conexión a MongoDB establecida');
+          mongoConnected = true;
+        });
+        
+        // Verificar el estado actual en caso de que la conexión ya esté abierta
+        if (connection.readyState === 1) { // 1 = connected
+          console.log('Conexión a MongoDB ya establecida (readyState=1)');
+          mongoConnected = true;
+        }
         return connection;
       },
     }),
@@ -47,8 +72,12 @@ dotenv.config()
     ChatWsModule,
   ],
   controllers: [
-   AuthController, RecursoController, ProyectoController],
+    AuthController, RecursoController, ProyectoController],
   providers: [
-    AuthService, RecursoService, ProyectoService,UsuarioService],
+    AuthService, RecursoService, ProyectoService, UsuarioService, MongoConnectionInterceptor],
 })
-export class AppModule { }
+export class AppModule {
+  static isMongoConnected(): boolean {
+    return mongoConnected;
+  }
+}

@@ -1,5 +1,5 @@
-import { Controller,Get,Post,Body,Param,Delete,Put,Res,HttpStatus,} from '@nestjs/common';
-import {ApiOkResponse,ApiResponse,ApiTags,ApiExcludeEndpoint,} from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete, Put, Res, HttpStatus, HttpException, NotFoundException, } from '@nestjs/common';
+import { ApiOkResponse, ApiResponse, ApiTags, ApiExcludeEndpoint, } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { AuthService } from 'src/auth/auth.service';
 import { Usuario } from './usuario.schema'; // Asegúrate de tener este schema
@@ -100,8 +100,12 @@ export class UsuarioController {
 
     @Get('name/:username')
     @ApiOkResponse({ description: 'Usuario por nombre de usuario', type: Usuario })
-    findByUsename(@Param('username') username: string) {
-        return this.usuarioService.findByUsename(username);
+    async findByUsename(@Param('username') username: string) {
+        const user = await this.usuarioService.findByUsename(username);
+        if (!user) {
+            throw new NotFoundException(`Usuario '${username}' no encontrado`);
+        }
+        return user;
     }
 
     @Get(':id/proyectos')
