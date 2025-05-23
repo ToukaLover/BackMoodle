@@ -63,4 +63,10 @@ export class ChatWsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.wss.to(to).emit('Usuario-Ocupado')
   }
 
+  //Si el chat esta ocupado (el cliente emite esto) el servidor manda al cliente especificado "Usuario-Ocupado"
+  @SubscribeMessage('no-molestar')
+  noMolestar(client: Socket,to) {
+    this.wss.to(to).emit('no-molestarWss')
+  }
+
 }
