@@ -1,5 +1,48 @@
 const db = db.getSiblingDB("Moodle");
 
+db.recursos.insertMany([
+  {
+  "projectId": "682c2dcdcc45e55430bae4f0",
+  "resourceType": "link",
+  "metadata": {
+    "link": "https://github.com/ToukaLover?tab=repositories",
+    "title": "RecursoGit",
+    "visible": true,
+    "date": {
+      "$date": "2025-05-23T09:31:49.253Z"
+    }
+  },
+  
+  "__v": 0
+},
+{
+  "projectId": "682c2dcdcc45e55430bae4f0",
+  "resourceType": "link",
+  "metadata": {
+    "link": "https://excalidraw.com/#json=nF60ClKUCPf9gvMFKdIcC,5IsR-Q7d9tHm19cGwO3NgA",
+    "title": "UML",
+    "visible": true,
+    "date": {
+      "$date": "2025-05-26T11:52:13.865Z"
+    }
+  },
+  "__v": 0
+},
+{
+  "projectId": "682c2dcdcc45e55430bae4f0",
+  "resourceType": "link",
+  "metadata": {
+    "link": "https://www.figma.com/design/gLjzaGYsCO32VwlKFOl9V7/FIgmaInnoRoom?node-id=0-1&t=aag0spgsEGA9K5rt-1",
+    "title": "Mockup Navegable",
+    "visible": true,
+    "date": {
+      "$date": "2025-05-26T11:52:34.795Z"
+    }
+  },
+  "__v": 0
+}
+])
+
 // Insertar usuarios
 db.usuarios.insertMany([
   {
