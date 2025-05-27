@@ -5,23 +5,36 @@ services:
     build: 
       dockerfile: DockerFile-Mongo
     container_name: mongo-preloaded
+    hostname: mongoUri
+    #hostname es el "localhost" como  se accede al contenedor
     restart: unless-stopped
     ports:
       - '27018:27017'
+    #Recuerda que la derecha es parte de docker, en el 27018 es para localhost
+    networks: 
+      - back
     # volumes: 
     #   - ./mongo_init/restore.js:/docker-entrypoint-initdb.d/restore.js
     #   - ./mongo_export:/docker-entrypoint-initdb.d/export
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: nest-app
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - ./.env
-  #   environment:
-  #     - MONGODB
-  #   depends_on:
-  #     - mongo
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-app
+    hostname: InnoRoom
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    #en el env, en el mongoDB le pones el puerto de docker, en este caso 27017
+    #Si vas a usar el back en local usas el puerto local, en este caso 27018
+    depends_on:
+      - mongo
+    networks: 
+      - back
+
+networks:
+  back:
+    driver: bridge
