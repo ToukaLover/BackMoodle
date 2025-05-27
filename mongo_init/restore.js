@@ -7,7 +7,7 @@ db.recursos.insertMany([
   "metadata": {
     "link": "https://github.com/ToukaLover?tab=repositories",
     "title": "RecursoGit",
-    "visible": true,
+    "visible": false,
     "date": {
       "$date": "2025-05-23T09:31:49.253Z"
     }
