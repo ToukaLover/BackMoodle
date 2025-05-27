@@ -12,8 +12,15 @@ export class ProyectoController {
   @Post('create')
   @ApiResponse({ status: 201, description: 'Proyecto creado', type: Proyecto })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  create(@Body() body: { title: string; description: string; admin_id: string }) {
-    return this.proyectoService.create(body);
+  async create(@Body() body: { title: string; description: string; admin_id: string }, @Res() res) {
+
+    const proyecto = await this.proyectoService.create(body)
+
+    if (proyecto === false) {
+      return res.status(201).json({ error: 'Proyecto con ese titulo ya existe' });
+    }
+
+     return res.status(201).json(proyecto);
   }
 
   @Get('all')

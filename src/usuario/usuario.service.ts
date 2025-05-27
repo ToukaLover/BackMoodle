@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Usuario } from './usuario.schema';
@@ -11,7 +11,13 @@ export class UsuarioService {
         @InjectModel(Proyecto.name) private proyectoModel: Model<Proyecto>) { }
 
     //Crea usuario
-    async create(data: { username: string; password: string; role: string }): Promise<Usuario> {
+    async create(data: { username: string; password: string; role: string }): Promise<Usuario|boolean>  {
+
+        const userAntiguo = await this.findByUsename(data.username)
+
+        if(userAntiguo){
+            return false
+        }
 
         const newPass = await hash(data.password)
 

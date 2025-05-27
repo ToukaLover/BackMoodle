@@ -48,6 +48,13 @@ export class ProyectoService {
 
   async create(data: { title: string; description: string; admin_id: string }) {
     // Usamos el adminId como string directamente
+    
+    const proyectoAntiguo = await this.findOneByTitle(data.title)
+    
+    if(proyectoAntiguo){
+      return false
+    }
+
     const adminId = data.admin_id;
 
     // Crear el proyecto

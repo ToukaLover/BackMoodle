@@ -20,8 +20,15 @@ export class UsuarioController {
 
     @ApiExcludeEndpoint()
     @Post('create')
-    create(@Body() body: { username: string; password: string; role: string }) {
-        return this.usuarioService.create(body);
+    async create(@Body() body: { username: string; password: string; role: string }, @Res() res) {
+
+        const user = await this.usuarioService.create(body)
+
+        if (user === false) {
+            return res.status(201).json({ error: 'Usuario ya existe' });
+        }
+
+        return res.status(201).json(user); // Usuario creado correctamente
     }
 
     @Get('all')
@@ -91,8 +98,8 @@ export class UsuarioController {
             if (result) {
                 return res.status(HttpStatus.OK).json(result);
             }
-            if(!result){
-                return res.status(HttpStatus.OK).json({message:"token no valido"})
+            if (!result) {
+                return res.status(HttpStatus.OK).json({ message: "token no valido" })
             }
         } catch (error) {
             return res
