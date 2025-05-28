@@ -2,7 +2,7 @@ services:
 
   mongo:
     image: mongo:6
-    build: 
+    build:
       dockerfile: DockerFile-Mongo
     container_name: mongo-preloaded
     hostname: mongoUri
@@ -11,7 +11,7 @@ services:
     ports:
       - '27018:27017'
     #Recuerda que la derecha es parte de docker, en el 27018 es para localhost
-    networks: 
+    networks:
       - back
     # volumes: 
     #   - ./mongo_init/restore.js:/docker-entrypoint-initdb.d/restore.js
@@ -32,8 +32,27 @@ services:
     #Si vas a usar el back en local usas el puerto local, en este caso 27018
     depends_on:
       - mongo
-    networks: 
+    networks:
       - back
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    hostname: minio
+    ports:
+      - "9000:9000" # Acceso API S3
+      - "9001:9001" # Consola web
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    command: server --console-address ":9001" /dataF
+    networks:
+      - back
+
+volumes:
+  minio-data:
 
 networks:
   back:

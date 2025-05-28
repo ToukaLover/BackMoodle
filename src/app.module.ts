@@ -23,6 +23,7 @@ import { ChatWsModule } from './chat-ws/chat-ws.module';
 import * as dotenv from 'dotenv';
 import { Connection } from 'mongoose';
 import { MongoConnectionInterceptor } from './mongo-connection.interceptor';
+import { MinioService } from './minio/minio.service';
 
 dotenv.config();
 
@@ -74,7 +75,7 @@ let mongoConnected = false;  // Variable global para estado de conexión
   controllers: [
     AuthController, RecursoController, ProyectoController],
   providers: [
-    AuthService, RecursoService, ProyectoService, UsuarioService, MongoConnectionInterceptor],
+    AuthService, RecursoService, ProyectoService, UsuarioService, MongoConnectionInterceptor, MinioService],
 })
 export class AppModule {
   static isMongoConnected(): boolean {

@@ -6,12 +6,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Usuario, UsuarioSchema } from 'src/usuario/usuario.schema';
 import { RecursoService } from 'src/recurso/recurso.service';
 import { Recurso, RecursoSchema } from 'src/recurso/recurso.schema';
+import { MinioService } from 'src/minio/minio.service';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Proyecto.name, schema: ProyectoSchema }]),
             MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
             MongooseModule.forFeature([{ name: Recurso.name, schema: RecursoSchema }])],
   controllers: [ProyectoController],
-  providers: [ProyectoService,RecursoService]
+  providers: [ProyectoService,RecursoService,MinioService]
 })
 export class ProyectoModule {}

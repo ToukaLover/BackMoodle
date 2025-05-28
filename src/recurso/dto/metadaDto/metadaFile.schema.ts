@@ -4,18 +4,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema({ _id: false }) // evita generar _id dentro de metadata
 export class MetadataFileDto {
   @Prop()
-  mimetype: string;
-
+  objectName: string;
   @Prop()
-  size: number;
-
-  @Prop()
-  data: Buffer;
+  title: string;
   @Prop()
   visible: Boolean;
   @Prop()
   date: Date;
-  @Prop()
-  title: string;
+  
 }
 

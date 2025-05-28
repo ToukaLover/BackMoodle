@@ -12,7 +12,7 @@ import { TestingModule } from '@nestjs/testing';
 export class ProyectoService {
   constructor(@InjectModel(Proyecto.name) private proyectoModel: Model<Proyecto>,
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
-    @InjectModel(Recurso.name) private recursoModel: Model<Recurso>) { }
+    private recusoService: RecursoService) { }
 
 
   //Busca un proyecto en especifico
@@ -34,7 +34,7 @@ export class ProyectoService {
   async remove(id: string): Promise<any> {
 
     //Borra todos los recursos con ese projectId
-    await this.recursoModel.deleteMany({ projectId: id })
+    await this.recusoService.deleteRecursosByProject(id);
 
     //Quita el string del projectId de la lista de proyectos del usuario, así dejan de esta relacionados
     await this.usuarioModel.updateMany( 

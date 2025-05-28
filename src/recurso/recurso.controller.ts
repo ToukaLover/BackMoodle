@@ -4,11 +4,14 @@ import { ApiTags, ApiBody, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RecursoService } from './recurso.service';
 import { Recurso } from './recurso.schema';
+import { privateDecrypt } from 'crypto';
+import { MinioService } from 'src/minio/minio.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @ApiTags('Recursos')
 @Controller('recursos')
 export class RecursoController {
-    constructor(private readonly recursoService: RecursoService) { }
+    constructor(private readonly recursoService: RecursoService, private readonly minioService: MinioService) { }
 
     @Post('link')
     @ApiBody({ type: Recurso })
@@ -28,24 +31,30 @@ export class RecursoController {
     //Recibe un fichero
     @UseInterceptors(FileInterceptor('file'))
     @ApiOkResponse({ description: 'Archivo subido', type: Recurso })
-    uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
-        return this.recursoService.uploadFile(body, file);
+    async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
+        const objectName = uuidv4() + '-' + body.title + "." + this.getExtension(file.mimetype);
+        await this.recursoService.uploadFile(objectName, body.visible, body.projectId, body.title)
+        return this.minioService.upload(file, objectName);
     }
 
     @Post('tareafile')
     //Recibe un fichero
     @UseInterceptors(FileInterceptor('file'))
     @ApiOkResponse({ description: 'Archivo de tarea subido', type: Recurso })
-    uploadTareaFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
-        return this.recursoService.uploadTareaFile(body, file);
+    async uploadTareaFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
+        const objectName = uuidv4() + '-' + body.title + "." + this.getExtension(file.mimetype);
+        await this.recursoService.uploadTareaFile(body, objectName);
+        return this.minioService.upload(file, objectName);
     }
 
     @Post('img')
     //Recibe un fichero
     @UseInterceptors(FileInterceptor('file'))
     @ApiOkResponse({ description: 'Imagen subida', type: Recurso })
-    uploadImg(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string) {
-        return this.recursoService.uploadImg(file, projectId);
+    async uploadImg(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string) {
+        const objectName = uuidv4() + '-' + file.originalname + "." + this.getExtension(file.mimetype);
+        await this.recursoService.uploadImg(projectId, objectName);
+        return this.minioService.upload(file, objectName);
     }
 
     @Get('proyecto/:projectId')
@@ -72,19 +81,13 @@ export class RecursoController {
     async getFile(@Param('id') id: string, @Res() res: Response) {
         //Recibo el id del fichero (guardado en la base de datos)
         const recurso = await this.recursoService.getFile(id);
-        const mimetype = recurso?.metadata.mimetype;
-        const extension = this.getExtension(mimetype);
-        const title = recurso?.metadata.title?.replace(/\s+/g, '_') || 'archivo';
-        const filename = `${title}.${extension}`;
+        await this.minioService.getObject(res, recurso?.metadata.objectName,recurso?.metadata.title)
+    }
 
-        //Pongo titulo y tipo al fichero
-        res.set({
-            'Content-Type': mimetype,
-            'Content-Disposition': `attachment; filename="${filename}"`,
-        });
-
-        //Envio el binario del recurso
-        res.send(recurso?.metadata.data);
+    @Delete('file/:id')
+    @ApiOkResponse({ description: 'Archivo descargado' })
+    async deleteFile(@Param('id') id: string) {
+        return await this.recursoService.deleteFile(id)
     }
 
     @Get('img/proyecto/:projectId')
@@ -92,27 +95,10 @@ export class RecursoController {
     async getImgByProject(@Param('projectId') projectId: string, @Res() res: Response) {
         //Busca un img por su projectId
         const recurso = await this.recursoService.getImg(projectId);
-        if (recurso) {
-            //Pongo titulo y tipo al fichero
-            res.set({ 'Content-Type': recurso?.metadata.mimetype });
-            //Envio el binario del recurso
-            res.send(recurso?.metadata.data);
+        if (recurso!==null) {
+            return await this.minioService.getObject(res, recurso?.metadata.objectName)
         } else {
-            //Al poder no tener imagen, devuelve false, en caso de no tenerla
-            res.send({ success: false, message: 'Imagen no encontrada' });
-        }
-    }
-
-    @Get('img/default')
-    @ApiOkResponse({ description: 'Imagen por defecto' })
-    async getDefaultImg(@Res() res: Response) {
-        //Esto devuelve una imagen por defecto, en la base de datos tiene esa Id, si cambia dejaria de funcionar
-        const recurso = await this.recursoService.getDefaultImg("6825b9083a9defef9471f2b0");
-        if (recurso) {
-            res.set({ 'Content-Type': recurso?.metadata.mimetype });
-            res.send(recurso?.metadata.data);
-        } else {
-            res.send({ success: false });
+            res.send({ success: false })
         }
     }
 
