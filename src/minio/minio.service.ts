@@ -56,7 +56,7 @@ export class MinioService {
         return {
             bucket: bucketName,
             objectName,
-            url: `http://localhost:9000/${bucketName}/${objectName}`,
+            url: `http://${process.env.MINIO_HOST}:${process.env.MINIO_PORT}/${bucketName}/${objectName}`,
         };
 
     }
