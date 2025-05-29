@@ -2,6 +2,9 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { Response } from 'express';
 import * as Minio from 'minio';
 import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
+import * as fsPromises from 'fs/promises';
+
 
 @Injectable()
 export class MinioService {
@@ -24,28 +27,38 @@ export class MinioService {
         const exists = await this.minioClient.bucketExists(bucketName).catch(() => false);
         if (!exists) {
             await this.minioClient.makeBucket(bucketName, 'us-east-1');
-        }  
+        }
 
-        return new Promise((resolve, reject) => {
-            this.minioClient.putObject(
-                bucketName,
-                objectName,
-                file.buffer,
-                file.size,
-                (err, etag) => {
-                    if (err) {
-                        reject(new InternalServerErrorException('Error uploading to MinIO'));
-                    } else {
-                        resolve({
-                            bucket: bucketName,
-                            key: objectName,
-                            etag,
-                            url: `http://${process.env.MINIO_HOST}:${process.env.MINIO_PORT}/${bucketName}/${objectName}`,
-                        });
-                    }
-                },
-            );
+        const fileStream = fs.createReadStream(file.path);
+
+        await new Promise((resolve, reject) => {
+            try {
+                this.minioClient.putObject(
+                    bucketName,
+                    objectName,
+                    fileStream,
+                    file.size,
+                    (err, etag) => {
+                        if (err) {
+                            reject(new InternalServerErrorException('Error uploading to MinIO'));
+                        }
+                        resolve(etag);
+                    },
+                );
+
+            } catch (error) {
+                console.error(error)
+            }
         });
+
+        await fsPromises.unlink(file.path);
+
+        return {
+            bucket: bucketName,
+            objectName,
+            url: `http://localhost:9000/${bucketName}/${objectName}`,
+        };
+
     }
 
     async getObject(res: Response, objectName: string, title?: string): Promise<void> {
@@ -60,14 +73,13 @@ export class MinioService {
             res.setHeader('Content-Type', 'application/octet-stream');
 
             stream.pipe(res);
-        } catch {
-
+        } catch (error) {
+            console.error(error);
         }
     }
 
     async delete(objectName: string): Promise<void> {
         const bucketName = 'innoroom';
-
         try {
             await this.minioClient.removeObject(bucketName, objectName);
         } catch (error) {

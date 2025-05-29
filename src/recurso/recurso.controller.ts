@@ -7,6 +7,7 @@ import { Recurso } from './recurso.schema';
 import { privateDecrypt } from 'crypto';
 import { MinioService } from 'src/minio/minio.service';
 import { v4 as uuidv4 } from 'uuid';
+import { diskStorage } from 'multer';
 
 @ApiTags('Recursos')
 @Controller('recursos')
@@ -29,7 +30,14 @@ export class RecursoController {
 
     @Post('file')
     //Recibe un fichero
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                cb(null, `${Date.now()}-${file.originalname}`);
+            },
+        }),
+    }))
     @ApiOkResponse({ description: 'Archivo subido', type: Recurso })
     async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
         const objectName = uuidv4() + '-' + body.title + "." + this.getExtension(file.mimetype);
@@ -39,7 +47,14 @@ export class RecursoController {
 
     @Post('tareafile')
     //Recibe un fichero
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                cb(null, `${Date.now()}-${file.originalname}`);
+            },
+        }),
+    }))
     @ApiOkResponse({ description: 'Archivo de tarea subido', type: Recurso })
     async uploadTareaFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
         const objectName = uuidv4() + '-' + body.title + "." + this.getExtension(file.mimetype);
@@ -49,10 +64,17 @@ export class RecursoController {
 
     @Post('img')
     //Recibe un fichero
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                cb(null, `${Date.now()}-${file.originalname}`);
+            },
+        }),
+    }))
     @ApiOkResponse({ description: 'Imagen subida', type: Recurso })
     async uploadImg(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string) {
-        const objectName = uuidv4() + '-' + file.originalname + "." + this.getExtension(file.mimetype);
+        const objectName = uuidv4() + '-' + file.originalname;
         await this.recursoService.uploadImg(projectId, objectName);
         return this.minioService.upload(file, objectName);
     }
@@ -81,7 +103,7 @@ export class RecursoController {
     async getFile(@Param('id') id: string, @Res() res: Response) {
         //Recibo el id del fichero (guardado en la base de datos)
         const recurso = await this.recursoService.getFile(id);
-        await this.minioService.getObject(res, recurso?.metadata.objectName,recurso?.metadata.title)
+        await this.minioService.getObject(res, recurso?.metadata.objectName, recurso?.metadata.title)
     }
 
     @Delete('file/:id')
@@ -95,7 +117,7 @@ export class RecursoController {
     async getImgByProject(@Param('projectId') projectId: string, @Res() res: Response) {
         //Busca un img por su projectId
         const recurso = await this.recursoService.getImg(projectId);
-        if (recurso!==null) {
+        if (recurso !== null) {
             return await this.minioService.getObject(res, recurso?.metadata.objectName)
         } else {
             res.send({ success: false })
