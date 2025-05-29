@@ -10,9 +10,10 @@ import * as fsPromises from 'fs/promises';
 export class MinioService {
     private minioClient: Minio.Client;
 
+
     constructor() {
         this.minioClient = new Minio.Client({
-            endPoint: 'localhost',
+            endPoint: `${process.env.MINIO_HOST}`,
             port: 9000,
             useSSL: false,
             accessKey: 'admin',
