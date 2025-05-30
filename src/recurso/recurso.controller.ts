@@ -41,8 +41,14 @@ export class RecursoController {
     @ApiOkResponse({ description: 'Archivo subido', type: Recurso })
     async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
         const objectName = uuidv4() + '-' + body.title + "." + this.getExtension(file.mimetype);
-        await this.recursoService.uploadFile(objectName, body.visible, body.projectId, body.title)
-        return this.minioService.upload(file, objectName);
+        const recursoMongo = await this.recursoService.uploadFile(objectName, body.visible, body.projectId, body.title)
+        const minio = await this.minioService.upload(file, objectName);
+        if (!minio) {
+            await this.recursoService.deleteFile(recursoMongo.id)
+            return { message: "Subida Fallida" }
+        }
+        return { message: "Subida Completada" }
+
     }
 
     @Post('tareafile')
@@ -58,8 +64,13 @@ export class RecursoController {
     @ApiOkResponse({ description: 'Archivo de tarea subido', type: Recurso })
     async uploadTareaFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
         const objectName = uuidv4() + '-' + body.title + "." + this.getExtension(file.mimetype);
-        await this.recursoService.uploadTareaFile(body, objectName);
-        return this.minioService.upload(file, objectName);
+        const recursoMongo = await this.recursoService.uploadTareaFile(body, objectName);
+        const minio = await this.minioService.upload(file, objectName);
+        if (!minio) {
+            await this.recursoService.deleteFile(recursoMongo.id)
+            return { message: "Subida Fallida" }
+        }
+        return { message: "Subida Completada" }
     }
 
     @Post('img')
@@ -75,8 +86,13 @@ export class RecursoController {
     @ApiOkResponse({ description: 'Imagen subida', type: Recurso })
     async uploadImg(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string) {
         const objectName = uuidv4() + '-' + file.originalname;
-        await this.recursoService.uploadImg(projectId, objectName);
-        return this.minioService.upload(file, objectName);
+        const recursoMongo = await this.recursoService.uploadImg(projectId, objectName);
+        const minio = await this.minioService.upload(file, objectName);
+        if (!minio) {
+            await this.recursoService.deleteFile(recursoMongo.id)
+            return { message: "Subida Fallida" }
+        }
+        return { message: "Subida Completada" }
     }
 
     @Get('proyecto/:projectId')
