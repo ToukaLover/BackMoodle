@@ -19,7 +19,7 @@ db.recursos.insertMany([
   "projectId": "682c2dcdcc45e55430bae4f0",
   "resourceType": "link",
   "metadata": {
-    "link": "https://excalidraw.com/#json=nF60ClKUCPf9gvMFKdIcC,5IsR-Q7d9tHm19cGwO3NgA",
+    "link": "https://excalidraw.com/#json=iJVJyGT7ahxG1E3xri4NA,12-m6KMZha2C5nWPviA-2Q",
     "title": "UML",
     "visible": true,
     "date": {
