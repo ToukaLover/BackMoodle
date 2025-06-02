@@ -37,6 +37,12 @@ export class UsuarioService {
         const hashedPass = await hash(data.password)
         return this.usuarioModel.findByIdAndUpdate(id, { $set: { password: hashedPass } }, { new: true }).exec();
     }
+
+    //Actualiza la contraseña del usuario
+    async updateImg(id: string, data: { link: string }): Promise<Usuario | null> {
+        console.log("Link en Servicio: "+data.link)
+        return this.usuarioModel.findByIdAndUpdate(id, { $set: { imgLink: data.link } }, { new: true }).exec();
+    }
     //Elimina un usuario
     async remove(id: string): Promise<any> {
 

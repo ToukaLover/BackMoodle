@@ -16,6 +16,9 @@ export class Usuario extends Document {
   @Prop()
   role: string;
 
+  @Prop()
+  imgLink?: string;
+
   @ApiProperty()
   @Prop({ type: [String], default: [] })
   proyectos: string[];

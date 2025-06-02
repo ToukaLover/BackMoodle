@@ -50,6 +50,14 @@ export class UsuarioController {
         return this.usuarioService.update(id, body);
     }
 
+    @Put(':id/Img')
+    @ApiOkResponse({ description: 'Usuario actualizado', type: Usuario })
+    updateImg(@Param('id') id: string, @Body() body: { link: string }) {
+
+        console.log("Link en Controller: "+body.link)
+        return this.usuarioService.updateImg(id, body);
+    }
+
     @Delete(':id')
     @ApiOkResponse({ description: 'Usuario eliminado' })
     remove(@Param('id') id: string) {
