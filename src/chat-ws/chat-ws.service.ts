@@ -45,7 +45,8 @@ export class ChatWsService {
             .filter(([id]) => id !== excludeSocketId)
             .map(([id, { user }]) => ({
                 socketId: id,
-                username: user?.username ?? null
+                username: user?.username ?? null,
+                imgLink: user?.imgLink ?? null
             }));
     }
     //Devuelve el socketId y username del socket especificado
