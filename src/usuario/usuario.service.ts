@@ -4,17 +4,19 @@ import { Model, Types } from 'mongoose';
 import { Usuario } from './usuario.schema';
 import { hash, deHash } from './encrypt/encrypt';
 import { Proyecto } from 'src/proyecto/proyecto.schema';
+import { Foro } from 'src/foro/foro.schema';
 
 @Injectable()
 export class UsuarioService {
     constructor(@InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
-        @InjectModel(Proyecto.name) private proyectoModel: Model<Proyecto>) { }
+        @InjectModel(Proyecto.name) private proyectoModel: Model<Proyecto>,
+        @InjectModel(Foro.name) private foroModel: Model<Foro>) { }
 
     //Crea usuario
     async create(data: { username: string; password: string; role: string }): Promise<Usuario|boolean>  {
 
         const userAntiguo = await this.findByUsename(data.username)
-
+        
         if(userAntiguo){
             return false
         }
@@ -45,6 +47,14 @@ export class UsuarioService {
     }
     //Elimina un usuario
     async remove(id: string): Promise<any> {
+        // Borrar las publicaciones a los foros del usuario
+        const user = await this.usuarioModel.findById(id)
+
+        const foros = await this.foroModel.find({user:user?.username})
+
+        for(const foro of foros){
+            await this.foroModel.findByIdAndDelete(foro.id)
+        }
 
         //tambien quita el usuario de los proyectos relacionados
         await this.proyectoModel.updateMany(

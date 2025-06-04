@@ -5,11 +5,13 @@ import { Usuario, UsuarioSchema } from './usuario.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthService } from 'src/auth/auth.service';
 import { Proyecto, ProyectoSchema } from 'src/proyecto/proyecto.schema';
+import { Foro, ForoSchema } from 'src/foro/foro.schema';
 
 @Module({
-  imports:[MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
-            MongooseModule.forFeature([{ name: Proyecto.name, schema: ProyectoSchema }])],
-  providers: [UsuarioService,AuthService],
+  imports: [MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
+  MongooseModule.forFeature([{ name: Foro.name, schema: ForoSchema }]),
+  MongooseModule.forFeature([{ name: Proyecto.name, schema: ProyectoSchema }])],
+  providers: [UsuarioService, AuthService],
   controllers: [UsuarioController]
 })
-export class UsuarioModule {}
+export class UsuarioModule { }

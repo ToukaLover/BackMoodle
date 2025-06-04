@@ -7,11 +7,13 @@ import { Usuario } from 'src/usuario/usuario.schema';
 import { RecursoService } from 'src/recurso/recurso.service';
 import { Recurso } from 'src/recurso/recurso.schema';
 import { TestingModule } from '@nestjs/testing';
+import { Foro } from 'src/foro/foro.schema';
 
 @Injectable()
 export class ProyectoService {
   constructor(@InjectModel(Proyecto.name) private proyectoModel: Model<Proyecto>,
     @InjectModel(Usuario.name) private usuarioModel: Model<Usuario>,
+    @InjectModel(Foro.name) private foroModel: Model<Foro>,
     private recusoService: RecursoService) { }
 
 
@@ -33,11 +35,19 @@ export class ProyectoService {
   //Borra el proyecto en especifico
   async remove(id: string): Promise<any> {
 
+    //Borra las publicaciones del foro del proyecto
+
+    const foros = await this.foroModel.find({ proyectoId:id })
+
+    for (const foro of foros) {
+      await this.foroModel.findByIdAndDelete(foro.id)
+    }
+
     //Borra todos los recursos con ese projectId
     await this.recusoService.deleteRecursosByProject(id);
 
     //Quita el string del projectId de la lista de proyectos del usuario, así dejan de esta relacionados
-    await this.usuarioModel.updateMany( 
+    await this.usuarioModel.updateMany(
       { proyectos: id },
       { $pull: { proyectos: id } }
     );
@@ -48,10 +58,10 @@ export class ProyectoService {
 
   async create(data: { title: string; description: string; admin_id: string }) {
     // Usamos el adminId como string directamente
-    
+
     const proyectoAntiguo = await this.findOneByTitle(data.title)
-    
-    if(proyectoAntiguo){
+
+    if (proyectoAntiguo) {
       return false
     }
 
@@ -67,7 +77,7 @@ export class ProyectoService {
 
     // Guarda el proyecto
     const savedProyecto = await proyecto.save()
-    
+
     //Mete el proyecto a la lista de proyectos del usuario admin, así esta relacionado directamente al ser creado
     const userActualizado = await this.usuarioModel.findByIdAndUpdate(
       adminId,

@@ -24,6 +24,7 @@ import * as dotenv from 'dotenv';
 import { Connection } from 'mongoose';
 import { MongoConnectionInterceptor } from './mongo-connection.interceptor';
 import { MinioService } from './minio/minio.service';
+import { Foro, ForoSchema } from './foro/foro.schema';
 
 dotenv.config();
 
@@ -65,6 +66,7 @@ let mongoConnected = false;  // Variable global para estado de conexión
     MongooseModule.forFeature([{ name: Proyecto.name, schema: ProyectoSchema }]),
     MongooseModule.forFeature([{ name: Usuario.name, schema: UsuarioSchema }]),
     MongooseModule.forFeature([{ name: Tarea.name, schema: TareaSchema }]),
+    MongooseModule.forFeature([{ name: Foro.name, schema: ForoSchema }]),
     RecursoModule,
     ProyectoModule,
     UsuarioModule,
