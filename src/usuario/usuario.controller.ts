@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Res, HttpStatus, HttpException, NotFoundException, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Res, HttpStatus, HttpException, NotFoundException, Query, } from '@nestjs/common';
 import { ApiOkResponse, ApiResponse, ApiTags, ApiExcludeEndpoint, } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -16,6 +16,14 @@ export class UsuarioController {
     @ApiOkResponse({ description: 'Lista de usuarios administradores', type: [Usuario] })
     findAdmins() {
         return this.usuarioService.findAdmins();
+    }
+
+    @Get('userPag')
+    @ApiOkResponse({ description: 'Lista de usuarios filtrando por su nombre', type: [Usuario] })
+    paginacionUsername(@Query("username") username : string ) {
+    
+        return this.usuarioService.usernamePag(username)
+    
     }
 
     @ApiExcludeEndpoint()
@@ -54,7 +62,7 @@ export class UsuarioController {
     @ApiOkResponse({ description: 'Usuario actualizado', type: Usuario })
     updateImg(@Param('id') id: string, @Body() body: { link: string }) {
 
-        console.log("Link en Controller: "+body.link)
+        console.log("Link en Controller: " + body.link)
         return this.usuarioService.updateImg(id, body);
     }
 

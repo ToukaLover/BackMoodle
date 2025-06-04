@@ -12,6 +12,11 @@ export class UsuarioService {
         @InjectModel(Proyecto.name) private proyectoModel: Model<Proyecto>,
         @InjectModel(Foro.name) private foroModel: Model<Foro>) { }
 
+
+    async usernamePag(username:string){
+        return (await this.usuarioModel.find({username:{$regex:username}}))
+    }    
+
     //Crea usuario
     async create(data: { username: string; password: string; role: string }): Promise<Usuario|boolean>  {
 
