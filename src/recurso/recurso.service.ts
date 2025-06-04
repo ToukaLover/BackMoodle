@@ -178,11 +178,12 @@ export class RecursoService {
 
     //Recursos (Funciones generales para todos los tipos de recursos)
 
-    async getAllResourcesByProject(projectName: string): Promise<Recurso[]> {
+    async getAllResourcesByProject(projectName: string,titulo:string): Promise<Recurso[]> {
         return this.recursoModel
             .find({
                 projectId: projectName,  // Filtra por el nombre del proyecto
-                resourceType: { $ne: 'img' }  // Excluye los recursos de tipo 'img'
+                resourceType: { $ne: 'img' },  // Excluye los recursos de tipo 'img'
+                'metadata.title':{$regex:titulo}
             })
             .select('id metadata.title metadata.link metadata.visible')
             .sort({ date: 1 })  // Ordena por fecha en orden ascendente (más antiguo primero)

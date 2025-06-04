@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Delete, Put, UploadedFile, UseInterceptors, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Delete, Put, UploadedFile, UseInterceptors, Res, HttpStatus, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBody, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -97,8 +97,8 @@ export class RecursoController {
 
     @Get('proyecto/:projectId')
     @ApiOkResponse({ description: 'Recursos del proyecto', type: [Recurso] })
-    getRecursosByProject(@Param('projectId') projectId: string) {
-        return this.recursoService.getAllResourcesByProject(projectId);
+    getRecursosByProject(@Param('projectId') projectId: string,@Query('titulo') titulo:string ) {
+        return this.recursoService.getAllResourcesByProject(projectId,titulo);
     }
 
     @Get('tarea/:tareaId/user/:userId')
