@@ -20,10 +20,11 @@ export class UsuarioController {
 
     @Get('userPag')
     @ApiOkResponse({ description: 'Lista de usuarios filtrando por su nombre', type: [Usuario] })
-    paginacionUsername(@Query("username") username : string ) {
-    
-        return this.usuarioService.usernamePag(username)
-    
+    async paginacionUsername(@Query("username") username : string,@Query('page') page: number ) {
+        const data = await this.usuarioService.usernamePag(username,page)
+
+        return data
+
     }
 
     @ApiExcludeEndpoint()

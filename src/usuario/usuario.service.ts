@@ -13,16 +13,24 @@ export class UsuarioService {
         @InjectModel(Foro.name) private foroModel: Model<Foro>) { }
 
 
-    async usernamePag(username:string){
-        return (await this.usuarioModel.find({username:{$regex:username}}))
-    }    
+    async usernamePag(username: string, page: number) {
+
+        const pageNumber = Number(page)
+
+        const [data, total] = await Promise.all([
+            this.usuarioModel.find({ username: { $regex: username } }).skip((pageNumber - 1) * 5).limit(5).exec(),
+            this.usuarioModel.countDocuments({ username: { $regex: username } }).exec(),
+        ]);
+
+        return {data,total}
+    }
 
     //Crea usuario
-    async create(data: { username: string; password: string; role: string }): Promise<Usuario|boolean>  {
+    async create(data: { username: string; password: string; role: string }): Promise<Usuario | boolean> {
 
         const userAntiguo = await this.findByUsename(data.username)
-        
-        if(userAntiguo){
+
+        if (userAntiguo) {
             return false
         }
 
@@ -47,7 +55,7 @@ export class UsuarioService {
 
     //Actualiza la contraseña del usuario
     async updateImg(id: string, data: { link: string }): Promise<Usuario | null> {
-        console.log("Link en Servicio: "+data.link)
+        console.log("Link en Servicio: " + data.link)
         return this.usuarioModel.findByIdAndUpdate(id, { $set: { imgLink: data.link } }, { new: true }).exec();
     }
     //Elimina un usuario
@@ -55,9 +63,9 @@ export class UsuarioService {
         // Borrar las publicaciones a los foros del usuario
         const user = await this.usuarioModel.findById(id)
 
-        const foros = await this.foroModel.find({user:user?.username})
+        const foros = await this.foroModel.find({ user: user?.username })
 
-        for(const foro of foros){
+        for (const foro of foros) {
             await this.foroModel.findByIdAndDelete(foro.id)
         }
 
