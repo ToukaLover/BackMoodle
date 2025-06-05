@@ -62,6 +62,15 @@ export class MinioService {
 
     }
 
+    async getSharingUrl(objectName: string){
+        const bucketName = 'innoroom';
+
+        const url = await this.minioClient.presignedUrl("get",bucketName,objectName);
+
+        return url
+
+    }
+
     async getObject(res: Response, objectName: string, title?: string): Promise<void> {
         const bucketName = 'innoroom';
 

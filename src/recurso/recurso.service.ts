@@ -112,7 +112,7 @@ export class RecursoService {
     }
 
     //Borra un fichero
-    async deleteFile(id: string): Promise<DeleteResult|null> {
+    async deleteFile(id: string): Promise<DeleteResult | null> {
         const recurso = await this.recursoModel.findById(id).exec();
 
         await this.minioService.delete(recurso?.metadata.objectName)
@@ -178,12 +178,12 @@ export class RecursoService {
 
     //Recursos (Funciones generales para todos los tipos de recursos)
 
-    async getAllResourcesByProject(projectName: string,titulo:string): Promise<Recurso[]> {
+    async getAllResourcesByProject(projectName: string, titulo: string): Promise<Recurso[]> {
         return this.recursoModel
             .find({
                 projectId: projectName,  // Filtra por el nombre del proyecto
-                resourceType: { $ne: 'img' },  // Excluye los recursos de tipo 'img'
-                'metadata.title':{$regex:titulo}
+                resourceType: { $nin : ['img','multimedia'] },  // Excluye los recursos de tipo 'img'
+                'metadata.title': { $regex: titulo }
             })
             .select('id metadata.title metadata.link metadata.visible')
             .sort({ date: 1 })  // Ordena por fecha en orden ascendente (más antiguo primero)
@@ -213,7 +213,7 @@ export class RecursoService {
 
         const recursos = await this.recursoModel.find({ projectId: id })
         for (let i = 0; i < recursos.length; i++) {
-            if(recursos[i].metadata.objectName){
+            if (recursos[i].metadata.objectName) {
                 await this.minioService.delete(recursos[i].metadata.objectName)
             }
         }
@@ -280,14 +280,50 @@ export class RecursoService {
         return await this.recursoModel.find({ tareaId }).select('id userId metadata.title metadata.link ')
     }
 
-    async deleteTareaRecursouser(tareaId: string, userId: string):Promise<DeleteResult|null>{
+    async deleteTareaRecursouser(tareaId: string, userId: string): Promise<DeleteResult | null> {
         const recurso = await this.recursoModel.findOne({ tareaId, userId })
-        if(recurso?.metadata.objectName){
+        if (recurso?.metadata.objectName) {
             await this.minioService.delete(recurso?.metadata.objectName)
         }
-        return await this.recursoModel.deleteOne({tareaId,userId})
+        return await this.recursoModel.deleteOne({ tareaId, userId })
     }
     async remove(id: string) {
         await this.recursoModel.findByIdAndDelete(id)
     }
+
+    //Multimeda
+    //Recurso ImgProfile
+    //Guarda un ficghero, pero que sea tipo img, ya que no quiero que salgan cuando busco recursos por su projectId
+    async uploadMultimedia(projectId: string, objectName: string,title:string) {
+        const created = new CreateFileDto()
+
+        created.projectId = projectId
+        created.resourceType = "multimedia"
+
+        const metadata = new MetadataFileDto()
+
+        metadata.objectName = objectName
+        metadata.title = title
+
+        created.metadata = metadata
+        const recurso = new this.recursoModel(created)
+
+        return recurso.save();
+    }
+
+    //Recoge un fichero por su id
+    async getMulti(id: string): Promise<Recurso | null> {
+        const recurso = await this.recursoModel.findById(id).exec();
+
+        if (recurso?.resourceType === 'multimedia') {
+            return recurso;
+        }
+
+        return null;
+    }
+
+    async getMultiByProject(id : string){
+        return this.recursoModel.find({projectId:id,resourceType:"multimedia"}).select('id metadata.title')
+    }
+
 }

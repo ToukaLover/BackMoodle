@@ -97,8 +97,8 @@ export class RecursoController {
 
     @Get('proyecto/:projectId')
     @ApiOkResponse({ description: 'Recursos del proyecto', type: [Recurso] })
-    getRecursosByProject(@Param('projectId') projectId: string,@Query('titulo') titulo:string ) {
-        return this.recursoService.getAllResourcesByProject(projectId,titulo);
+    getRecursosByProject(@Param('projectId') projectId: string, @Query('titulo') titulo: string) {
+        return this.recursoService.getAllResourcesByProject(projectId, titulo);
     }
 
     @Get('tarea/:tareaId/user/:userId')
@@ -182,4 +182,44 @@ export class RecursoController {
         };
         return map[mimetype] || 'bin';
     }
+
+    //Multimedia
+    @Post('multi')
+    //Recibe un fichero
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                cb(null, `${Date.now()}-${file.originalname}`);
+            },
+        }),
+    }))
+    @ApiOkResponse({ description: 'Imagen subida', type: Recurso })
+    async uploadMultimedia(@UploadedFile() file: Express.Multer.File, @Body('projectId') projectId: string,@Body('title') title:string ) {
+        const objectName = uuidv4() + '-' + file.originalname;
+        const recursoMongo = await this.recursoService.uploadMultimedia(projectId, objectName,title);
+        const minio = await this.minioService.upload(file, objectName);
+        if (!minio) {
+            await this.recursoService.deleteFile(recursoMongo.id)
+            return { message: "Subida Fallida" }
+        }
+        return { message: "Subida Completada" }
+    }
+
+    @Get('multi/:id')
+    @ApiOkResponse({ description: 'Archivo descargado' })
+    async getMulti(@Param('id') id: string) {
+        //Recibo el id del fichero (guardado en la base de datos)
+        const recurso = await this.recursoService.getMulti(id);
+        const url = await this.minioService.getSharingUrl(recurso?.metadata.objectName)
+
+        return {url}
+
+    }
+
+    @Get("multi/proyecto/:id")
+    async getMultiByProject(@Param('id') id : string ){
+        return this.recursoService.getMultiByProject(id)
+    }
+
 }
