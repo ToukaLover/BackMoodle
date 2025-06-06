@@ -18,8 +18,8 @@ export class UsuarioService {
         const pageNumber = Number(page)
 
         const [data, total] = await Promise.all([
-            this.usuarioModel.find({ username: { $regex: username } }).skip((pageNumber - 1) * 5).limit(5).exec(),
-            this.usuarioModel.countDocuments({ username: { $regex: username } }).exec(),
+            this.usuarioModel.find({ username: { $regex: username , $options: 'i'} }).skip((pageNumber - 1) * 5).limit(5).exec(),
+            this.usuarioModel.countDocuments({ username: { $regex: username, $options: 'i' } }).exec(),
         ]);
 
         return {data,total}

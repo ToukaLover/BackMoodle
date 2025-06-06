@@ -218,8 +218,8 @@ export class RecursoController {
     }
 
     @Get("multi/proyecto/:id")
-    async getMultiByProject(@Param('id') id : string ){
-        return this.recursoService.getMultiByProject(id)
+    async getMultiByProject(@Param('id') id : string,@Query("titulo")titulo:string ){
+        return this.recursoService.getMultiByProject(id,titulo)
     }
 
 }

@@ -182,8 +182,8 @@ export class RecursoService {
         return this.recursoModel
             .find({
                 projectId: projectName,  // Filtra por el nombre del proyecto
-                resourceType: { $nin : ['img','multimedia'] },  // Excluye los recursos de tipo 'img'
-                'metadata.title': { $regex: titulo }
+                resourceType: { $nin: ['img', 'multimedia'] },  // Excluye los recursos de tipo 'img'
+                'metadata.title': { $regex: titulo, $options: 'i' }
             })
             .select('id metadata.title metadata.link metadata.visible')
             .sort({ date: 1 })  // Ordena por fecha en orden ascendente (más antiguo primero)
@@ -294,7 +294,7 @@ export class RecursoService {
     //Multimeda
     //Recurso ImgProfile
     //Guarda un ficghero, pero que sea tipo img, ya que no quiero que salgan cuando busco recursos por su projectId
-    async uploadMultimedia(projectId: string, objectName: string,title:string) {
+    async uploadMultimedia(projectId: string, objectName: string, title: string) {
         const created = new CreateFileDto()
 
         created.projectId = projectId
@@ -322,8 +322,13 @@ export class RecursoService {
         return null;
     }
 
-    async getMultiByProject(id : string){
-        return this.recursoModel.find({projectId:id,resourceType:"multimedia"}).select('id metadata.title')
+    async getMultiByProject(id: string, titulo) {
+        return this.recursoModel.find({
+            projectId: id,  // Filtra por el nombre del proyecto
+            resourceType: 'multimedia',  // Excluye los recursos de tipo 'img'
+            'metadata.title': { $regex: titulo, $options: 'i' }
+        }
+        ).select('id metadata.title')
     }
 
 }
